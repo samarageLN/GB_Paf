@@ -43,8 +43,6 @@ public class ProposalProject {
 		return output;
 	}
 	
-	
-
 	public String readProjects() {
 		String output = "";
 		try {

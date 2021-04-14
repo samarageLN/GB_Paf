@@ -1,6 +1,8 @@
 package com;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
+
+import model.Fund;
 import model.ProposalProject;
 
 @Path("/Project")
@@ -8,6 +10,7 @@ import model.ProposalProject;
 public class ProposalProjectService {
 
 	ProposalProject pro = new ProposalProject();
+	Fund f = new Fund();
 	
 	@GET
 	@Path("/")
@@ -26,12 +29,18 @@ public class ProposalProjectService {
 			 @FormParam("projectType") String projectType
 			 )
 			{ 
-		
 		String output = pro.insertProject(projectname, doclinks, description, projectType); 
 		return output;
-		
 			}
-	 
-
+	
+	@GET
+	@Path("/{ProId}")
+	@Produces(MediaType.TEXT_HTML)
+	public String readFundById(@PathParam("ProId") String ProId){
+		
+		String output = f.readFundById(ProId);
+		//String output = pro.readProjectById(ProId);
+		return output;
+	}
 	
 }

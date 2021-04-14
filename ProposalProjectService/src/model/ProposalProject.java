@@ -1,8 +1,6 @@
 package model;
 
 import java.sql.Connection;
-import java.sql.Date;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -11,10 +9,9 @@ import connection.Conn;
 
 public class ProposalProject {
 	
-
+	Fund f = new Fund();
 	Conn con = new Conn();
 
-	
 	public String insertProject(String projectname, String doclinks, String description, String projectType) {
 		
 		String output = "";
@@ -63,12 +60,11 @@ public class ProposalProject {
 			Statement stmt = conn.createStatement();
 			ResultSet rs = stmt.executeQuery(query);
 
-			while (rs.next()) {
+			
 				String projectID = Integer.toString(rs.getInt("projectID"));
 				String projectname = rs.getString("projectname");
 				String doclinks = rs.getString("doclinks");
 				String description = rs.getString("description");
-				;
 				String projectType = rs.getString("projectType");
 
 				output += "<tr><td>" + projectID + "</td>";
@@ -81,12 +77,56 @@ public class ProposalProject {
 						+ "<td><form method='post' action='projects.jsp'>" + "<input name='btnRemove' "
 						+ " type='submit' value='Remove'>" + "<input name='projectID' type='hidden' " + " value='"
 						+ projectID + "'>" + "</form></td></tr>";
-			}
+			
 			conn.close();
 			output += "</table>";
 
 		} catch (Exception e) {
 			output = "Error while reading the projects.";
+			System.err.println(e.getMessage());
+		}
+
+		return output;
+	}
+	
+	public String readProjectById(String ID) {
+		String output = "";
+		
+		try {
+			Connection conn = con.connect();
+			if (con == null) {
+				return "Error while connecting to the database for reading";
+			}
+
+			output = "<table border ='1'>" + "<tr><th>projectID</th><th>projectname</th><th>doclinks</th>"
+					+ "<th>description</th><th>projectType</th><th>status</th>";
+
+			String query = "select * from proposalproject where projectID = ?";
+			
+			PreparedStatement preparedStmt = conn.prepareStatement(query);
+			preparedStmt.setInt(1, Integer.parseInt(ID));
+			ResultSet rs = preparedStmt.executeQuery();
+			
+			while(rs.next()) {
+				String proId = Integer.toString(rs.getInt("projectID"));
+				String proName = rs.getString("projectname");
+				String documentlinks = rs.getString("doclinks");
+				String des = rs.getString("description");
+				String proType = rs.getString("projectType");
+				String status = rs.getString("status");
+
+				output += "<tr><td>" + proId + "</td>";
+				output += "<td>" + proName + "</td>";
+				output += "<td>" + documentlinks + "</td>";
+				output += "<td>" + des + "</td>";
+				output += "<td>" + proType + "</td>";
+				output += "<td>" + status + "</td>";
+			}
+			conn.close();
+			output += "</table>";
+
+		} catch (Exception e) {
+			output = "Error while reading the Projects.";
 			System.err.println(e.getMessage());
 		}
 

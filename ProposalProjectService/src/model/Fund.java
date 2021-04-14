@@ -2,15 +2,27 @@ package model;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
+
 
 import connection.Conn;
 
-public class Fund  {
+public class Fund {
 
 	Conn con = new Conn();
-	
-public String insertFunds(String proID, String actualAmount) {
-		
+    private String currentFunds;
+    
+	private String getCurrentFunds() {
+		return currentFunds;
+	}
+
+	private void setCurrentFunds(String currentFunds) {
+		this.currentFunds = currentFunds;
+	}
+
+	public String insertFunds(String proID, String actualAmount) {
+
 		String output = "";
 
 		try {
@@ -29,9 +41,9 @@ public String insertFunds(String proID, String actualAmount) {
 			preparedStmt.execute();
 
 			conn.close();
-			
+
 			output = "Inserted successfully";
-			
+
 		} catch (Exception e) {
 			output = "Error while inserting";
 			System.out.println(e.getMessage());
@@ -39,8 +51,111 @@ public String insertFunds(String proID, String actualAmount) {
 		return output;
 	}
 
-	//public void insertFunds(String projectID, String actualAmount, String currentTotalFunds) {
-		// TODO Auto-generated method stub
+	public String readFunds() {
+		String output = "";
+		try {
+			Connection conn = con.connect();
+			if (con == null) {
+				return "Error while connecting to the database for reading";
+			}
+
+			output = "<table border ='1'>" + "<tr><th>Fund ID</th><th>Project ID</th><th>Actual Amount</th>"
+					+ "<th>Current Total Funds</th><th>Created Date</th>";
+
+			String query = "select * from funds";
+			Statement stmt = conn.createStatement();
+			ResultSet rs = stmt.executeQuery(query);
+
+			while (rs.next()) {
+				String fundID = Integer.toString(rs.getInt("fundID"));
+				String projectID = rs.getString("proID");
+				String actualAmount = rs.getString("actualAmount");
+				String currentFunds = rs.getString("currentTotalFunds");
+				String createdDate = rs.getString("createdDate");
+				
+				output += "<tr><td>" + fundID + "</td>";
+				output += "<td>" + projectID + "</td>";
+				output += "<td>" + actualAmount + "</td>";
+				output += "<td>" + currentFunds + "</td>";
+				output += "<td>" + createdDate + "</td>";
+			}
+			conn.close();
+			output += "</table>";
+
+		} catch (Exception e) {
+			output = "Error while reading the Funds.";
+			System.err.println(e.getMessage());
+		}
+
+		return output;
+	}
+	
+	public String readFundById(String ID) {
+		String output = "";
 		
-	//}
+		try {
+			Connection conn = con.connect();
+			if (con == null) {
+				return "Error while connecting to the database for reading";
+			}
+
+			output = "<table border ='1'>" + "<tr><th>Fund ID</th><th>Project ID</th><th>Actual Amount</th>"
+					+ "<th>Current Total Funds</th><th>Created Date</th>";
+
+			String query = "select * from funds where fundID = ?";
+			
+			PreparedStatement preparedStmt = conn.prepareStatement(query);
+			preparedStmt.setInt(1, Integer.parseInt(ID));
+			ResultSet rs = preparedStmt.executeQuery();
+			
+			while(rs.next()) {
+				String fundID = Integer.toString(rs.getInt("fundID"));
+				String projectID = rs.getString("proID");
+				String actualAmount = rs.getString("actualAmount");
+				String currentFunds = rs.getString("currentTotalFunds");
+				String createdDate = rs.getString("createdDate");
+				setCurrentFunds(currentFunds);
+				output += "<tr><td>" + fundID + "</td>";
+				output += "<td>" + projectID + "</td>";
+				output += "<td>" + actualAmount + "</td>";
+				output += "<td>" + currentFunds + "</td>";
+				output += "<td>" + createdDate + "</td>";
+			}
+			conn.close();
+			output += "</table>";
+
+		} catch (Exception e) {
+			output = "Error while reading the Funds.";
+			System.err.println(e.getMessage());
+		}
+
+		return output;
+	}
+	public String updatePayment(String ID,String amount) {
+		String output = "";
+		
+		
+		try
+		{
+			Connection conn = con.connect();
+			if(con == null) {
+				return "Error while connecting to the database for updating";
+			}
+			String query = "UPDATE funds SET currentTotalFunds=? WHERE fundID =?";
+			PreparedStatement preparedStmt = conn.prepareStatement(query);
+			
+			preparedStmt.setDouble(1, Double.parseDouble(amount));
+			preparedStmt.setInt(2, Integer.parseInt(ID));
+			preparedStmt.execute();
+			conn.close();
+			
+			output = "Updated successfully";
+		}
+		catch(Exception e) {
+			output = "Error while updating the item";
+			System.err.println(e.getMessage());
+		}
+		return output;
+	}
+		
 }

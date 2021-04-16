@@ -10,7 +10,7 @@ private static final String URL = "jdbc:mysql://localhost:3306/paymentsdb";
 	
 	private static final String USERNAME = "root";
 	
-	private static final String PASSWORD = "root123";
+	private static final String PASSWORD = "";
 	
 	private static Connection connection = null;
 	

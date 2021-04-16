@@ -20,7 +20,7 @@ public class Fund {
 		this.currentFunds = currentFunds;
 	}
 
-	public String insertFunds(String proID, String actualAmount) {
+	public String insertFunds(String proID,String actualAmount) {
 
 		String output = "";
 
@@ -29,8 +29,8 @@ public class Fund {
 			if (con == null) {
 				return "Error while connecting to the database";
 			}
-			String query = "insert into funds (`fundID`,`proID`,`actualAmount`,`currentTotalFunds`)"
-					+ "values (?,?,?,?)";
+			String query = "insert into funds (`fundID`,`proID`,`actualAmount`,`currentTotalFunds`,`createdDate`)"
+					+ "values (?,?,?,?,current_timestamp())";
 			PreparedStatement preparedStmt = conn.prepareStatement(query);
 
 			preparedStmt.setInt(1, 0);
@@ -183,7 +183,7 @@ public class Fund {
 			ResultSet rs = preparedStmt.executeQuery();
 			
 			while (rs.next()) {
-				String currAmount = Integer.toString(rs.getInt("currentTotalFunds"));
+				String currAmount = Double.toString(rs.getDouble("currentTotalFunds"));
 				
 				Double total = Double.parseDouble(currAmount) + Double.parseDouble(amount);
 				

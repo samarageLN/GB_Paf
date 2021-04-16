@@ -1,6 +1,7 @@
 package com;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -10,10 +11,27 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.parser.Parser;
+
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import model.Fund;
+
+/**
+ * FundService
+ * 
+ ********************************************************************************************************
+ *  ###   Date             Author       Description
+ *-------------------------------------------------------------------------------------------------------
+ *    1   15-04-2021       David        Created
+ *    
+ ********************************************************************************************************
+ */
+
+
 
 @Path("/Funds")
 public class FundService {
@@ -57,5 +75,5 @@ public class FundService {
 		String output = fund.updatePayment(fundID, amount);
 		return output;
 	}
-
+		
 }

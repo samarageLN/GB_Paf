@@ -15,7 +15,7 @@ public class ProposalProject {
 	public String insertProject(String projectname, String doclinks, String description, String projectType) {
 
 		String output = "";
-
+		
 		try {
 			Connection conn = con.connect();
 			if (con == null) {
@@ -52,7 +52,7 @@ public class ProposalProject {
 			}
 
 			output = "<table border ='1'>" + "<tr><th>project ID</th><th>Project Name</th><th>Document Links</th>"
-					+ "<th>Description</th><th>Project Type</th>";
+					+ "<th>Description</th><th>Project Type</th><th>Project Type</th>";
 
 			String query = "select * from proposalProject";
 			Statement stmt = conn.createStatement();
@@ -64,13 +64,14 @@ public class ProposalProject {
 			String doclinks = rs.getString("doclinks");
 			String description = rs.getString("description");
 			String projectType = rs.getString("projectType");
+			String status = rs.getString("status");
 
 			output += "<tr><td>" + projectID + "</td>";
 			output += "<td>" + projectname + "</td>";
 			output += "<td>" + doclinks + "</td>";
 			output += "<td>" + description + "</td>";
 			output += "<td>" + projectType + "</td>";
-
+			output += "<td>" + status + "</td>";
 			
 			}
 			conn.close();
@@ -130,8 +131,7 @@ public class ProposalProject {
 
 	public String getApproval(String ID, String msg) {
 		String output = "";
-		// String message = msg;
-
+		
 		if (msg.equals("Approved")) {
 			try {
 				Connection conn = con.connect();
@@ -181,4 +181,30 @@ public class ProposalProject {
 			return "Error";
 		}
 	}
+	public String deleteProjects(String Id) {
+		String output="";
+		try {
+			Connection conn = con.connect();
+			if (con == null) {
+				return "Error while connecting to the database for deleting.";
+			}
+
+			String query = "delete proposalproject, funds from proposalproject inner join funds where proposalproject.projectID = funds.proID and proposalproject.projectID = ?";
+
+			PreparedStatement preparedStmt = conn.prepareStatement(query);
+
+			preparedStmt.setInt(1, Integer.parseInt(Id));
+			preparedStmt.execute();
+			conn.close();
+
+			output = "Delete succesfully";
+
+		} catch (Exception e) {
+			output = "Error while deleting the item.";
+			System.err.println(e.getMessage());
+		}
+
+		return output;
+	}
+
 }

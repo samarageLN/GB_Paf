@@ -8,8 +8,6 @@ import java.sql.Statement;
 import java.sql.Date;
 import java.sql.DriverManager;
 
-
-
 public class UserCard {
 	// this will maintain the card details of the users
 
@@ -84,13 +82,13 @@ public class UserCard {
 		this.postalCode = postalCode;
 	}
 
-	//connection
+	// connection
 	public Connection connect() {
 		Connection con = null;
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
 			con = DriverManager.getConnection("jdbc:mysql://localhost:3306/paymentsdb", "root", "");
-		
+
 		} catch (Exception e) {
 
 			e.printStackTrace();
@@ -99,11 +97,6 @@ public class UserCard {
 		return con;
 	}
 
-	
-	
-	
-	
-	
 	// -------------methods for db operations-----
 
 	public String insertCardDetails(int userId, String nameOnCard, String cardNo, String expDate, int secCode,
@@ -111,7 +104,7 @@ public class UserCard {
 		String output = "";
 
 		try {
-			Connection conn = connect() ;
+			Connection conn = connect();
 			if (conn == null) {
 				output = " Error while Connecting to the database";
 			}
@@ -149,7 +142,7 @@ public class UserCard {
 
 		try {
 
-			Connection conn = connect() ;
+			Connection conn = connect();
 			if (conn == null) {
 				output = " Error while Connecting to the database";
 			}
@@ -197,7 +190,7 @@ public class UserCard {
 		String output = "";
 
 		try {
-			Connection con = connect() ;
+			Connection con = connect();
 			if (con == null) {
 				output = "Error while Connecfting to the database ";
 
@@ -213,6 +206,42 @@ public class UserCard {
 		} catch (Exception e) {
 
 			output = " error while deleting  card details";
+			e.printStackTrace();
+		}
+
+		return output;
+	}
+
+//method to update  card details
+	public String updateCardDetails(int userId, String nameOnCard, String cardNumber, String expireDate, int securityNumber, int postalCode) {
+
+		String output = "";
+		try {
+			Connection con = connect();
+			if (con == null) {
+				output = "Error While Connecting to the Database!!!";
+			}
+
+			String query = "update usercard set nameonCard = ? , cardNumber = ? ,expireDate = ? , securityCode = ?, postalCode=? where userId = ?";
+
+			PreparedStatement stmt = con.prepareStatement(query);
+
+			stmt.setString(1, nameOnCard);
+			stmt.setString(2, cardNumber);
+			Date date2 = Date.valueOf(expireDate);
+			stmt.setDate(3, date2); 
+			stmt.setInt(4, securityNumber);
+			stmt.setInt(5, postalCode);
+			stmt.setInt(6, userId);
+
+			stmt.execute();
+			con.close();
+
+			output = "Sucessfully Updated !!!";
+
+		} catch (Exception e) {
+
+			output = "Error while Updating card details ";
 			e.printStackTrace();
 		}
 

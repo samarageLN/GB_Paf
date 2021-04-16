@@ -43,7 +43,8 @@ public class UserCardAPI {
 		int secCode = cardObject.get("securityCode").getAsInt();
 		int postalCode = cardObject.get("postalCode").getAsInt();
 
-		System.out.println(userId + nameOnCard + cardNumber + expDate + secCode + postalCode);
+		// System.out.println(userId + nameOnCard + cardNumber + expDate + secCode +
+		// postalCode);
 
 		String output = userCard.insertCardDetails(userId, nameOnCard, cardNumber, expDate, secCode, postalCode);
 		return output;
@@ -58,6 +59,24 @@ public class UserCardAPI {
 		JsonObject cardObject = new JsonParser().parse(cardData).getAsJsonObject();
 		int userId = cardObject.get("userId").getAsInt();
 		String output = userCard.removeCard(userId);
+		return output;
+	}
+
+	@PUT
+	@Path("/")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.TEXT_PLAIN)
+	public String updateCardDetails(String itemData) {
+
+		JsonObject cardObject = new JsonParser().parse(itemData).getAsJsonObject();
+		// Read the values from the JSON object
+		int userId = cardObject.get("userId").getAsInt();
+		String nameOnCard = cardObject.get("nameOnCard").getAsString();
+		String cardNumber = cardObject.get("cardNumber").getAsString();
+		String expDate = cardObject.get("expiredate").getAsString();
+		int secCode = cardObject.get("securityCode").getAsInt();
+		int postalCode = cardObject.get("postalCode").getAsInt();
+		String output = userCard.updateCardDetails(userId, nameOnCard, cardNumber, expDate, secCode, postalCode);
 		return output;
 	}
 

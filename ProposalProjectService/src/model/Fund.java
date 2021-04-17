@@ -4,9 +4,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
-
-import com.ProposalProjectService;
-
 import connection.Conn;
 
 public class Fund {
@@ -140,6 +137,9 @@ public class Fund {
 			ResultSet rs = preparedStmt.executeQuery();
 
 			while (rs.next()) {
+				
+  //************************************************ Reading values from fund and project tables and assign them into variables ************************************
+				
 				String fundID = Integer.toString(rs.getInt("fundID"));
 				String projectID = rs.getString("proID");
 				String actualAmount = rs.getString("actualAmount");

@@ -11,7 +11,19 @@ public class ProposalProject {
 
 	
 	Conn con = new Conn();
-
+	
+	/**
+	 * Inserting values to Project table
+	 * 
+	 * 
+	 ********************************************************************************************************
+	 *  ###   Date             Author       Description
+	 *-------------------------------------------------------------------------------------------------------
+	 *    1   14-04-2021       David        Created
+	 *    
+	 ********************************************************************************************************
+	 */
+	
 	public String insertProject(String projectname, String doclinks, String description, String projectType) {
 
 		String output = "";
@@ -43,6 +55,18 @@ public class ProposalProject {
 		return output;
 	}
 
+	/**
+	 * Reading all values from Project table
+	 * 
+	 * 
+	 ********************************************************************************************************
+	 *  ###   Date             Author       Description
+	 *-------------------------------------------------------------------------------------------------------
+	 *    1   14-04-2021       David        Created
+	 *    
+	 ********************************************************************************************************
+	 */
+	
 	public String readProjects() {
 		String output = "";
 		try {
@@ -59,13 +83,18 @@ public class ProposalProject {
 			ResultSet rs = stmt.executeQuery(query);
 
 			while (rs.next()) {
+	
+     //************************************************ Reading values from fund and assign them into variables ************************************
+			
 			String projectID = Integer.toString(rs.getInt("projectID"));
 			String projectname = rs.getString("projectname");
 			String doclinks = rs.getString("doclinks");
 			String description = rs.getString("description");
 			String projectType = rs.getString("projectType");
 			String status = rs.getString("status");
-
+			
+	 //************************************************ Presenting the values of the variables in a table format ************************************
+			
 			output += "<tr><td>" + projectID + "</td>";
 			output += "<td>" + projectname + "</td>";
 			output += "<td>" + doclinks + "</td>";
@@ -84,7 +113,19 @@ public class ProposalProject {
 
 		return output;
 	}
-
+	
+	/**
+	 * Reading values from Db by project ID
+	 * 
+	 * 
+	 ********************************************************************************************************
+	 *  ###   Date             Author       Description
+	 *-------------------------------------------------------------------------------------------------------
+	 *    1   14-04-2021       David        Created
+	 *    
+	 ********************************************************************************************************
+	 */
+	
 	public String readProjectById(String ID) {
 		String output = "";
 
@@ -98,19 +139,23 @@ public class ProposalProject {
 					+ "<th>description</th><th>projectType</th><th>status</th>";
 
 			String query = "select * from proposalproject where projectID = ?";
-
 			PreparedStatement preparedStmt = conn.prepareStatement(query);
 			preparedStmt.setInt(1, Integer.parseInt(ID));
 			ResultSet rs = preparedStmt.executeQuery();
 
 			while (rs.next()) {
+				
+	 //************************************************ Reading values from Project and assign them into variables ************************************				
+				
 				String proId = Integer.toString(rs.getInt("projectID"));
 				String proName = rs.getString("projectname");
 				String documentlinks = rs.getString("doclinks");
 				String des = rs.getString("description");
 				String proType = rs.getString("projectType");
 				String status = rs.getString("status");
-
+				
+	  //************************************************ Presenting the values of the variables in a table format ************************************
+				
 				output += "<tr><td>" + proId + "</td>";
 				output += "<td>" + proName + "</td>";
 				output += "<td>" + documentlinks + "</td>";
@@ -128,34 +173,57 @@ public class ProposalProject {
 
 		return output;
 	}
-
+	
+	/**
+	 * Getting the approval from Admin
+	 * 
+	 * 
+	 ********************************************************************************************************
+	 *  ###   Date             Author       Description
+	 *-------------------------------------------------------------------------------------------------------
+	 *    1   14-04-2021       David        Created
+	 *    
+	 ********************************************************************************************************
+	 */
+	
 	public String getApproval(String ID, String msg) {
 		String output = "";
-		System.out.println(msg+ID);
+
+    //************************************************ Validating the Message that was received from Admin ************************************
+		
 		if (msg.equals("Approved") || msg.equals("Closed")) {
+			
 			try {
 				Connection conn = con.connect();
 				if (con == null) {
 					return "Error while connecting to the database for updating";
 				}
-				System.out.println(msg+ID);
+				
 				String query = "UPDATE proposalproject SET status=? WHERE projectID =?";
 				PreparedStatement preparedStmt = conn.prepareStatement(query);
-
+				
+	//************************************************ Updating Status Column as Approved or Closed ************************************
+				
 				preparedStmt.setString(1, msg);
 				preparedStmt.setInt(2, Integer.parseInt(ID));
 				preparedStmt.execute();
 				conn.close();
 
 				output = "Updated successfully";
-			} catch (Exception e) {
+				
+			} 
+			catch (Exception e) {
 				output = "Error while updating the Project";
 				System.err.println(e.getMessage());
 			}
+			
 			return output;
 		}
-
+		
+	//************************************************ Validating the Message that was received from Admin ************************************
+		
 		else if (!msg.equals("Approved") || !msg.equals("Closed")) {
+		
 			try {
 				Connection conn = con.connect();
 				if (con == null) {
@@ -164,6 +232,8 @@ public class ProposalProject {
 
 				String query = "delete proposalproject, funds from proposalproject inner join funds where proposalproject.projectID = funds.proID and proposalproject.projectID = ?";
 
+	//************************************************ Deleting values from projects and funds by ID ************************************				
+				
 				PreparedStatement preparedStmt = conn.prepareStatement(query);
 
 				preparedStmt.setInt(1, Integer.parseInt(ID));
@@ -172,7 +242,8 @@ public class ProposalProject {
 
 				output = "Delete succesfully";
 
-			} catch (Exception e) {
+			} 
+			catch (Exception e) {
 				output = "Error while deleting the Projects.";
 				System.err.println(e.getMessage());
 			}
@@ -182,6 +253,19 @@ public class ProposalProject {
 			return "Error";
 		}
 	}
+	
+	/**
+	 * Deleting the projects 
+	 * 
+	 * 
+	 ********************************************************************************************************
+	 *  ###   Date             Author       Description
+	 *-------------------------------------------------------------------------------------------------------
+	 *    1   16-04-2021       David        Created
+	 *    
+	 ********************************************************************************************************
+	 */
+	
 	public String deleteProjects(String Id) {
 		String output="";
 		try {

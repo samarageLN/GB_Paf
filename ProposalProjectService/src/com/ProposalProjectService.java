@@ -2,11 +2,9 @@ package com;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
-
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.parser.Parser;
-
 import model.Fund;
 import model.ProposalProject;
 

@@ -9,7 +9,7 @@ import connection.Conn;
 
 public class ProposalProject {
 
-	Fund f = new Fund();
+	
 	Conn con = new Conn();
 
 	public String insertProject(String projectname, String doclinks, String description, String projectType) {
@@ -22,15 +22,15 @@ public class ProposalProject {
 				return "Error while connecting to the database";
 			}
 			String query = "insert into proposalproject (`projectID`,`projectname`,`doclinks`,`description`,`projectType`,`status`)"
-					+ "values (?,?,?,?,?,?)";
+					+ "values (?,?,?,?,?,'Pending')";
 			PreparedStatement preparedStmt = conn.prepareStatement(query);
-
+			
 			preparedStmt.setInt(1, 0);
 			preparedStmt.setString(2, projectname);
 			preparedStmt.setString(3, doclinks);
 			preparedStmt.setString(4, description);
 			preparedStmt.setString(5, projectType);
-			preparedStmt.setString(6, null);
+			
 			preparedStmt.execute();
 			conn.close();
 
@@ -131,13 +131,14 @@ public class ProposalProject {
 
 	public String getApproval(String ID, String msg) {
 		String output = "";
-		
-		if (msg.equals("Approved")) {
+		System.out.println(msg+ID);
+		if (msg.equals("Approved") || msg.equals("Closed")) {
 			try {
 				Connection conn = con.connect();
 				if (con == null) {
 					return "Error while connecting to the database for updating";
 				}
+				System.out.println(msg+ID);
 				String query = "UPDATE proposalproject SET status=? WHERE projectID =?";
 				PreparedStatement preparedStmt = conn.prepareStatement(query);
 
@@ -148,13 +149,13 @@ public class ProposalProject {
 
 				output = "Updated successfully";
 			} catch (Exception e) {
-				output = "Error while updating the item";
+				output = "Error while updating the Project";
 				System.err.println(e.getMessage());
 			}
 			return output;
 		}
 
-		else if (!msg.equals("Approved")) {
+		else if (!msg.equals("Approved") || !msg.equals("Closed")) {
 			try {
 				Connection conn = con.connect();
 				if (con == null) {
@@ -172,7 +173,7 @@ public class ProposalProject {
 				output = "Delete succesfully";
 
 			} catch (Exception e) {
-				output = "Error while deleting the item.";
+				output = "Error while deleting the Projects.";
 				System.err.println(e.getMessage());
 			}
 
@@ -200,7 +201,7 @@ public class ProposalProject {
 			output = "Delete succesfully";
 
 		} catch (Exception e) {
-			output = "Error while deleting the item.";
+			output = "Error while deleting the Projects.";
 			System.err.println(e.getMessage());
 		}
 

@@ -33,7 +33,7 @@ public class ProposalProjectService {
 	@GET
 	@Path("/")
 	@Produces(MediaType.TEXT_HTML)
-	public String readItems() {
+	public String readProjects() {
 		return pro.readProjects();
 	}
 
@@ -42,8 +42,7 @@ public class ProposalProjectService {
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.TEXT_PLAIN)
 	public String insertProject(@FormParam("projectname") String projectname, @FormParam("doclinks") String doclinks,
-			@FormParam("description") String description, @FormParam("projectType") String projectType
-			) {
+			@FormParam("description") String description, @FormParam("projectType") String projectType) {
 		String output = pro.insertProject(projectname, doclinks, description, projectType);
 		return output;
 	}

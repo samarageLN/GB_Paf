@@ -13,6 +13,18 @@ public class InnovativeProjectAPI {
 	
 	InnovativeProject ipObj = new InnovativeProject();
 	
+	
+
+	@GET
+	@Path("/")
+	@Produces(MediaType.TEXT_HTML)
+	public String readItems() {
+		
+		
+		return ipObj.readInnovativeProjects();
+	}
+	
+	
 	@POST
 	@Path("/")
 	@Consumes(MediaType.APPLICATION_JSON)

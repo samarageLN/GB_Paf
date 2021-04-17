@@ -2,7 +2,7 @@ package model;
 
 import java.sql.*;
 
-import util.DBConnection;
+
 
 public class InnovativeProject {
 
@@ -65,19 +65,36 @@ public class InnovativeProject {
 				+ ", projectDescription=" + projectDescription + ", researcherID=" + researcherID + "]";
 	}
 
-	// calling db connect method
+	// DB Connection method
 
-	Connection con = DBConnection.connect();
+	public Connection connect() {
+		Connection con = null;
+
+		try {
+			Class.forName("com.mysql.jdbc.Driver");
+			con = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/innovativeprojectsdb", "root", "");
+			// For testing
+			System.out.print("Successfully connected");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return con;
+	}
+
+	
 
 	// insert method
 
-	public String uploadProject(String pname, String pPrice, String pUrl, String pType, String pDescription,int pResearcherID) {
+	public String uploadProject(String pname, String pPrice, String pUrl, String pType, String pDescription,
+			int pResearcherID) {
 
 		String output = "";
 
 		try {
 
-			Connection con = DBConnection.connect();
+			Connection con = connect();
+			
 			if (con == null) {
 
 				return "Error while connecting to the database";
@@ -122,5 +139,75 @@ public class InnovativeProject {
 
 		return output;
 	}// end of insert method
+	
+	
+	
+	
+	// read items
+
+		public String readInnovativeProjects() {
+
+			String output = "";
+
+			try {
+
+				Connection con = connect();
+
+				if (con == null) {
+
+					return "Error while connecting to the database for reading";
+
+				}
+
+			
+				
+				
+				// read innovat from DB and assign values for resultset variable
+
+				String query = "select* from innovativeprojects";
+				Statement stmt = con.createStatement();
+
+				ResultSet rs = stmt.executeQuery(query);
+
+				// iterate through the rows in the result set
+
+				while (rs.next()) {
+					
+					
+					String iprojectid = Integer.toString(rs.getInt("innovativeProjectID"));
+					String iprojectname = rs.getString("projectName");
+					String iprojectprice =  Double.toString(rs.getDouble("projectPrice"));
+					String iprojectimageurl =rs.getString("imageURL");
+					String itprojectType = rs.getString("projectType");
+					String iprojectdescription =rs.getString("projectDescription");
+					String iresaecrhid = Integer.toString(rs.getInt("researcherID"));
+					
+					output += "{";
+
+					
+					output += "innovativeProjectID : \" " + iprojectid + "\", ";
+					output += "projectName : \" " + iprojectname + "\", ";
+					output += "projectPrice : \" " + iprojectprice + "\", ";
+					output += "imageURL : \" " + iprojectimageurl + "\", ";
+					output += "projectType : \" " + itprojectType + "\", ";
+					output += "projectDescription : \" " + iprojectdescription + "\", ";
+					output += "researcherID : \" " + iresaecrhid + "\" }";
+					
+                    output += "\n";
+					
+				}
+				con.close();
+
+				
+
+			} catch (Exception e) {
+
+				output = "Error while reading innovativeProjects";
+				System.out.println(e.getMessage());
+
+			}
+			return output;
+		}// end of read method
+
 
 }

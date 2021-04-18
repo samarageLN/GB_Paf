@@ -26,6 +26,19 @@ public class PaymentsAPI {
 		return payment.readAllPaymentDetails();
 	}
 	
+	//to get payment details of a specific user 
+	@GET
+	@Path("/")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.TEXT_PLAIN)
+	public String readItems(String userIdjson) {
+
+		JsonObject jsonObj = new JsonParser().parse(userIdjson).getAsJsonObject();
+
+		int userId = jsonObj.get("userId").getAsInt();
+		return payment.readPaymentDetails(userId);
+	}
+
 	
 	
 	@POST

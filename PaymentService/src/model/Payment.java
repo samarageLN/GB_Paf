@@ -144,7 +144,7 @@ public class Payment {
 			//these fields need to obtain via Inter service communication
 			preparedstatement.setString(3,"00000");
 			preparedstatement.setString(4,"Saman");
-			preparedstatement.setInt(5,0);
+			preparedstatement.setInt(5,1);
 			preparedstatement.setString(6,"innovativeProject");
 			preparedstatement.setString(7,"purchase");
 			preparedstatement.setDouble(8,0.00);
@@ -215,15 +215,15 @@ public class Payment {
 
 				// creating jSON string
 				output += "{ ";
-				output += "userId : \" " + paymentId + "\", ";
-				output += "userId : \" " + refnumber + "\", ";
-				output += "userId : \" " + cardnumber + "\", ";
-				output += "userId : \" " + paidBy + "\", ";
-				output += "userId : \" " + paidFor + "\", ";
-				output += "userId : \" " + type + "\", ";
-				output += "userId : \" " + amount + "\", ";
-				output += "userId : \" " + date + "\", ";
-				output += "userId : \" " + time + "\"} \n ";
+				output += "paymentId : \" " + paymentId + "\", ";
+				output += "refnumber : \" " + refnumber + "\", ";
+				output += "cardnumber : \" " + cardnumber + "\", ";
+				output += "paidBy : \" " + paidBy + "\", ";
+				output += "paidFor : \" " + paidFor + "\", ";
+				output += "type : \" " + type + "\", ";
+				output += "amount : \" " + amount + "\", ";
+				output += "date : \" " + date + "\", ";
+				output += "time : \" " + time + "\"} \n ";
 				
 			
 			} // end of while
@@ -237,6 +237,64 @@ public class Payment {
 		}
 		return output;
 	}
+	
+	//method to read all the payment details  of a specific user 
+	public String readPaymentDetails(int userId) {
+		String output = "";
+
+		try {
+
+			Connection conn = dbConnection.connect();
+			if (conn == null) {
+				output = " Error while Connecting to the database";
+			}
+
+			
+
+			String query = " select * from payments where paidUserId = "+userId;
+			Statement stmt = conn.createStatement();
+
+			// getting the result to the result set
+			ResultSet resultSet = stmt.executeQuery(query);
+
+			while (resultSet.next()) {
+				
+				// read a row and storing them on our variables
+				String paymentId = Integer.toString(resultSet.getInt("paymentId"));
+				String refnumber = resultSet.getString("referenceNumber");
+				String cardnumber = resultSet.getString("cardnumber");
+				String paidBy = resultSet.getString("paidBy");
+				String paidFor = resultSet.getString("paidFor");
+				String type = resultSet.getString("type");
+				double amount = resultSet.getDouble("amount");
+				String date = resultSet.getString("date");
+				String time = resultSet.getString("time");
+
+				// creating jSON string
+				output += "{ ";
+				output += "paymentId : \" " + paymentId + "\", ";
+				output += "refnumber : \" " + refnumber + "\", ";
+				output += "cardnumber : \" " + cardnumber + "\", ";
+				output += "paidBy : \" " + paidBy + "\", ";
+				output += "paidFor : \" " + paidFor + "\", ";
+				output += "type : \" " + type + "\", ";
+				output += "amount : \" " + amount + "\", ";
+				output += "date : \" " + date + "\", ";
+				output += "time : \" " + time + "\"} \n ";
+				
+			
+			} // end of while
+
+			// closing the connection
+			conn.close();
+
+		} catch (Exception e) {
+			output = " Error while reading the payment details";
+			e.printStackTrace();
+		}
+		return output;
+	}
+	
 	
 	
 }

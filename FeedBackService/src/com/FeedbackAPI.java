@@ -85,7 +85,7 @@ public class FeedbackAPI {
 			return output;
 		}
 		
-		// implement the InnovativeProject update method
+		// implement the feedback update method
 
 		@PUT
 		@Path("/")

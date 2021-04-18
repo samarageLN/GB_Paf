@@ -39,7 +39,7 @@ public class InnovativeProjectAPI {
 		return ipObj.readOneInnovativeProject(innovativeProjectID);
 	}
 
-	// implement the upload innovative project method
+	// implement the innovative project upload method
 
 	@POST
 	@Path("/")
@@ -65,7 +65,7 @@ public class InnovativeProjectAPI {
 
 	}
 
-	// implement the remove InnovativeProjects method
+	// implement the InnovativeProjects remove method
 
 	@DELETE
 	@Path("/")
@@ -78,6 +78,30 @@ public class InnovativeProjectAPI {
 		int innovativeProjectID = innovativeProjectObject.get("innovativeProjectID").getAsInt();
 		String output = ipObj.removeInnnovativeProjects(innovativeProjectID);
 		return output;
+	}
+
+	// implement the InnovativeProject update method
+
+	@PUT
+	@Path("/")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.TEXT_PLAIN)
+	public String updateIProjects(String ProjectDetails) {
+
+		JsonObject innovativeProjectObject = new JsonParser().parse(ProjectDetails).getAsJsonObject();
+
+		String projectid = innovativeProjectObject.get("innovativeProjectID").getAsString();
+		String projectname = innovativeProjectObject.get("projectName").getAsString();
+		String projectprice = innovativeProjectObject.get("projectPrice").getAsString();
+		String imageurl = innovativeProjectObject.get("imageURL").getAsString();
+		String project_type = innovativeProjectObject.get("projectType").getAsString();
+		String projdesc = innovativeProjectObject.get("projectDescription").getAsString();
+		String researchid = innovativeProjectObject.get("researcherID").getAsString();
+
+		String output = ipObj.updateInnovativeProject(projectid, projectname, Double.parseDouble(projectprice),
+				imageurl, project_type, projdesc, Integer.parseInt(researchid));
+		return output;
+
 	}
 
 }

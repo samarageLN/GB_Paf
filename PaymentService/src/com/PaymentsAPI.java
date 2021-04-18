@@ -1,6 +1,7 @@
 package com;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -52,4 +53,18 @@ public class PaymentsAPI {
 		String output = payment.insertPaymentDetails(cardnumber);
 		return output;
 	}
+	
+	@DELETE
+	@Path("/")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.TEXT_PLAIN)
+	public String deleteItem(String payData) {
+
+		JsonObject jsonObject = new JsonParser().parse(payData).getAsJsonObject();
+		int paymentId = jsonObject.get("paymentId").getAsInt();
+		String output = payment.removePayment(paymentId);
+		return output;
+	}
+	
+	
 }

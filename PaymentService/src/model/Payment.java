@@ -295,6 +295,34 @@ public class Payment {
 		return output;
 	}
 	
+	//delete payment details -- allow only for admin
+	public String removePayment(int paymentId) {
+		String output = "";
+		try {
+			Connection con = dbConnection.connect();
+			if (con == null) {
+				output = "Error while Connecfting to the database ";
+
+			}
+
+			String query = "delete from payments where paymentId=" + paymentId + " ";
+			PreparedStatement stmt = con.prepareStatement(query);
+			stmt.executeUpdate();
+			con.close();
+
+			output = " payment details  Removed SuccessFully !!!";
+
+		} catch (Exception e) {
+
+			output = " error while deleting  payment details";
+			e.printStackTrace();
+		}
+
+		return output;
+	}
+	
+	
+	
 	
 	
 }

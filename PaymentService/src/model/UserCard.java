@@ -2,9 +2,13 @@ package model;
 
 import java.sql.Connection;
 
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
+
+import util.DBconnection;
+
 import java.sql.Date;
 import java.sql.DriverManager;
 
@@ -82,20 +86,9 @@ public class UserCard {
 		this.postalCode = postalCode;
 	}
 
-	// connection
-	public Connection connect() {
-		Connection con = null;
-		try {
-			Class.forName("com.mysql.jdbc.Driver");
-			con = DriverManager.getConnection("jdbc:mysql://localhost:3306/paymentsdb", "root", "");
-
-		} catch (Exception e) {
-
-			e.printStackTrace();
-		}
-
-		return con;
-	}
+	//obtaining the connection 
+	DBconnection dbConnection = new DBconnection();
+	
 
 	// -------------methods for db operations-----
 
@@ -104,7 +97,7 @@ public class UserCard {
 		String output = "";
 
 		try {
-			Connection conn = connect();
+			Connection conn = dbConnection.connect();
 			if (conn == null) {
 				output = " Error while Connecting to the database";
 			}
@@ -142,7 +135,7 @@ public class UserCard {
 
 		try {
 
-			Connection conn = connect();
+			Connection conn = dbConnection.connect();
 			if (conn == null) {
 				output = " Error while Connecting to the database";
 			}
@@ -190,7 +183,7 @@ public class UserCard {
 		String output = "";
 
 		try {
-			Connection con = connect();
+			Connection con = dbConnection.connect();
 			if (con == null) {
 				output = "Error while Connecfting to the database ";
 
@@ -217,7 +210,7 @@ public class UserCard {
 
 		String output = "";
 		try {
-			Connection con = connect();
+			Connection con = dbConnection.connect();
 			if (con == null) {
 				output = "Error While Connecting to the Database!!!";
 			}

@@ -175,6 +175,8 @@ public class InnovativeProject {
 				String iprojectdescription = rs.getString("projectDescription");
 				String iresaecrhid = Integer.toString(rs.getInt("researcherID"));
 
+				// create a JSON String 
+				
 				output += "{";
 
 				output += "innovativeProjectID : \" " + iprojectid + "\", ";
@@ -237,6 +239,8 @@ public class InnovativeProject {
 				String iprojectdescription = rs.getString("projectDescription");
 				String iresaecrhid = Integer.toString(rs.getInt("researcherID"));
 
+				// create a JSON String
+				
 				output += "{";
 
 				output += "innovativeProjectID : \" " + iprojectid + "\", ";

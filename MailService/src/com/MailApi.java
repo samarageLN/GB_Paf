@@ -1,6 +1,7 @@
 package com;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -41,6 +42,18 @@ public class MailApi {
 			
 			e.printStackTrace();
 		}
+		return output;
+	}
+	
+	@DELETE
+	@Path("/")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.TEXT_PLAIN)
+	public String deleteItem(String maildata) {
+
+		JsonObject jsonObject = new JsonParser().parse(maildata).getAsJsonObject();
+		int mailId = jsonObject.get("mailId").getAsInt();
+		String output = mail.removeEmail(mailId);
 		return output;
 	}
 	

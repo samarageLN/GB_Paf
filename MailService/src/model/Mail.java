@@ -291,5 +291,32 @@ public class Mail {
 		return output;
 	}
 	
+	//method to remove emails
+	public String removeEmail(int mailId) {
+		String output = "";
+		try {
+			Connection con =connect();
+			if (con == null) {
+				output = "Error while Connecfting to the database ";
+
+			}
+
+			String query = "delete from mails where mailId=" + mailId + " ";
+			PreparedStatement stmt = con.prepareStatement(query);
+			stmt.executeUpdate();
+			con.close();
+
+			output = " mail details  Removed SuccessFully !!!";
+
+		} catch (Exception e) {
+
+			output = " error while deleting  mail details";
+			e.printStackTrace();
+		}
+
+		return output;
+	}
+	
+	
 	
 }

@@ -11,14 +11,14 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 public class Feedback {
-	
+
 	private int feedbackID;
 	private int iProjectID;
-	private String 	postedBy;
+	private String postedBy;
 	private String description;
-	private  String date;
+	private String date;
 	private String time;
-	
+
 	public Feedback() {
 		super();
 	}
@@ -86,7 +86,7 @@ public class Feedback {
 		return "Feedback [feedbackID=" + feedbackID + ", iProjectID=" + iProjectID + ", postedBy=" + postedBy
 				+ ", description=" + description + ", date=" + date + ", time=" + time + "]";
 	}
-	
+
 	// DB Connection method
 
 	public Connection connect() {
@@ -106,212 +106,315 @@ public class Feedback {
 
 	// insert method
 
-		public String putFeedback(int iProjectID, String FpostedBy, String Fdescription) {
+	public String putFeedback(int iProjectID, String FpostedBy, String Fdescription) {
 
-			String output = "";
+		String output = "";
 
-			// connect to the database
+		// connect to the database
 
-			try {
+		try {
 
-				Connection con = connect();
+			Connection con = connect();
 
-				if (con == null) {
+			if (con == null) {
 
-					return "Error while connecting to the database";
-
-				}
-
-				// insert query
-
-				String query = "insert into feedback (`feedbackID`,`iProjectID`,`postedBy`,`description`,`date`,`time`)"
-						+ " values(?, ?, ?, ?, ?, ?)";
-
-				// create a prepared statement
-
-				PreparedStatement preparedStmt = con.prepareStatement(query);
-
-				// binding values
-
-				preparedStmt.setInt(1, 0);
-				preparedStmt.setInt(2,iProjectID );
-				preparedStmt.setString(3, FpostedBy);
-				preparedStmt.setString(4, Fdescription);
-				
-		
-
-				// create a java calendar instance
-				
-				Calendar calendar = Calendar.getInstance();
-				java.util.Date currentDate = calendar.getTime();
-
-				// now, create a java.sql.Date from the java.util.Date
-				java.sql.Date date = new java.sql.Date(currentDate.getTime());	
-				
-				preparedStmt.setDate(5, date);
-				
-				//time
-				Calendar cal = Calendar.getInstance();
-				
-		        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
-		        
-		        String ctime =sdf.format(cal.getTime()).toString();
-		        
-		        System.out.println(ctime);
-		        
-		        Time currentTime = Time.valueOf(ctime);
-				
-				preparedStmt.setTime(6, currentTime);
-				
-				// execute the statement
-
-				preparedStmt.execute();
-
-				// close the connection
-
-				con.close();
-
-				output = "Feedback inserted Successfully";
-
-			} catch (Exception e) {
-
-				output = "Error while inserting";
-				System.out.println(e.getMessage());
+				return "Error while connecting to the database";
 
 			}
 
-			return output;
-		}// end of insert method
-		
-		
+			// insert query
 
-		// read all feedbacks method
+			String query = "insert into feedback (`feedbackID`,`iProjectID`,`postedBy`,`description`,`date`,`time`)"
+					+ " values(?, ?, ?, ?, ?, ?)";
 
-		public String viewFeedbacks() {
+			// create a prepared statement
 
-			String output = "";
+			PreparedStatement preparedStmt = con.prepareStatement(query);
 
-			// connect to the database
+			// binding values
 
-			try {
+			preparedStmt.setInt(1, 0);
+			preparedStmt.setInt(2, iProjectID);
+			preparedStmt.setString(3, FpostedBy);
+			preparedStmt.setString(4, Fdescription);
 
-				Connection con = connect();
+			// create a java calendar instance
 
-				if (con == null) {
+			Calendar calendar = Calendar.getInstance();
+			java.util.Date currentDate = calendar.getTime();
 
-					return "Error while connecting to the database for reading";
+			// now, create a java.sql.Date from the java.util.Date
+			java.sql.Date date = new java.sql.Date(currentDate.getTime());
 
-				}
+			preparedStmt.setDate(5, date);
 
-				// read feedbacks from DB and assign values for result set variable
+			// time
+			Calendar cal = Calendar.getInstance();
 
-				String query = "select* from feedback";
-				Statement stmt = con.createStatement();
+			SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
 
-				ResultSet rs = stmt.executeQuery(query);
+			String ctime = sdf.format(cal.getTime()).toString();
 
-				// iterate through the rows in the result set
+			System.out.println(ctime);
 
-				while (rs.next()) {
+			Time currentTime = Time.valueOf(ctime);
 
-					String feedback_id = Integer.toString(rs.getInt("feedbackID"));
-					String iproject_id =Integer.toString(rs.getInt("iProjectID"));
-					String f_postedby = rs.getString("postedBy");
-					String f_description = rs.getString("description");
-					String f_date = rs.getString("date");
-					String f_time = rs.getString("time");
-					
-					//create JSON string
-					
-					output += "{";
+			preparedStmt.setTime(6, currentTime);
 
-					output += "feedbackID : \" " + feedback_id + "\", ";
-					output += "iProjectID : \" " + iproject_id + "\", ";
-					output += "postedBy : \" " + f_postedby + "\", ";
-					output += "description : \" " + f_description + "\", ";
-					output += "date : \" " + f_date + "\", ";
-					output += "time : \" " + f_time + "\" }";
+			// execute the statement
 
-					output += "\n";
+			preparedStmt.execute();
 
-				}
-				con.close();
+			// close the connection
 
-			} catch (Exception e) {
+			con.close();
 
-				output = "Error while reading feedbacks";
-				System.out.println(e.getMessage());
+			output = "Feedback inserted Successfully";
 
-			}
-			return output;
-		}// end of read method
+		} catch (Exception e) {
 
-		
-		// read one particular feedback method
+			output = "Error while inserting";
+			System.out.println(e.getMessage());
 
-		public String readOneFeedback(int feedbackid) {
+		}
 
-			String output = "";
+		return output;
+	}// end of insert method
 
-			// connect to the database
+	// read all feedbacks method
 
-			try {
+	public String viewFeedbacks() {
 
-				Connection con = connect();
+		String output = "";
 
-				if (con == null) {
+		// connect to the database
 
-					return "Error while connecting to the database for reading";
+		try {
 
-				}
+			Connection con = connect();
 
-				// read particular feedback from DB and assign values for result set variable
+			if (con == null) {
 
-				String query = "select* from feedback where feedbackID  = " + feedbackid;
-				Statement stmt = con.createStatement();
-
-				ResultSet rs = stmt.executeQuery(query);
-
-				// iterate through the rows in the result set
-
-				while (rs.next()) {
-					
-					
-
-					String feedback_id = Integer.toString(rs.getInt("feedbackID"));
-					String iproject_id =Integer.toString(rs.getInt("iProjectID"));
-					String f_postedby = rs.getString("postedBy");
-					String f_description = rs.getString("description");
-					String f_date = rs.getString("date");
-					String f_time = rs.getString("time");
-					
-
-			
-
-					// create a JSON String
-					
-					output += "{";
-
-
-					output += "feedbackID : \" " + feedback_id + "\", ";
-					output += "iProjectID : \" " + iproject_id + "\", ";
-					output += "postedBy : \" " + f_postedby + "\", ";
-					output += "description : \" " + f_description + "\", ";
-					output += "date : \" " + f_date + "\", ";
-					output += "time : \" " + f_time + "\" }";
-
-					output += "\n";
-
-				}
-				con.close();
-
-			} catch (Exception e) {
-
-				output = "Error while reading feedback";
-				System.out.println(e.getMessage());
+				return "Error while connecting to the database for reading";
 
 			}
-			return output;
-		}// end of read one particular feedback method
 
+			// read feedbacks from DB and assign values for result set variable
+
+			String query = "select* from feedback";
+			Statement stmt = con.createStatement();
+
+			ResultSet rs = stmt.executeQuery(query);
+
+			// iterate through the rows in the result set
+
+			while (rs.next()) {
+
+				String feedback_id = Integer.toString(rs.getInt("feedbackID"));
+				String iproject_id = Integer.toString(rs.getInt("iProjectID"));
+				String f_postedby = rs.getString("postedBy");
+				String f_description = rs.getString("description");
+				String f_date = rs.getString("date");
+				String f_time = rs.getString("time");
+
+				// create JSON string
+
+				output += "{";
+
+				output += "feedbackID : \" " + feedback_id + "\", ";
+				output += "iProjectID : \" " + iproject_id + "\", ";
+				output += "postedBy : \" " + f_postedby + "\", ";
+				output += "description : \" " + f_description + "\", ";
+				output += "date : \" " + f_date + "\", ";
+				output += "time : \" " + f_time + "\" }";
+
+				output += "\n";
+
+			}
+			con.close();
+
+		} catch (Exception e) {
+
+			output = "Error while reading feedbacks";
+			System.out.println(e.getMessage());
+
+		}
+		return output;
+	}// end of read method
+
+	// read one particular feedback method
+
+	public String readOneFeedback(int feedbackid) {
+
+		String output = "";
+
+		// connect to the database
+
+		try {
+
+			Connection con = connect();
+
+			if (con == null) {
+
+				return "Error while connecting to the database for reading";
+
+			}
+
+			// read particular feedback from DB and assign values for result set variable
+
+			String query = "select* from feedback where feedbackID  = " + feedbackid;
+			Statement stmt = con.createStatement();
+
+			ResultSet rs = stmt.executeQuery(query);
+
+			// iterate through the rows in the result set
+
+			while (rs.next()) {
+
+				String feedback_id = Integer.toString(rs.getInt("feedbackID"));
+				String iproject_id = Integer.toString(rs.getInt("iProjectID"));
+				String f_postedby = rs.getString("postedBy");
+				String f_description = rs.getString("description");
+				String f_date = rs.getString("date");
+				String f_time = rs.getString("time");
+
+				// create a JSON String
+
+				output += "{";
+
+				output += "feedbackID : \" " + feedback_id + "\", ";
+				output += "iProjectID : \" " + iproject_id + "\", ";
+				output += "postedBy : \" " + f_postedby + "\", ";
+				output += "description : \" " + f_description + "\", ";
+				output += "date : \" " + f_date + "\", ";
+				output += "time : \" " + f_time + "\" }";
+
+				output += "\n";
+
+			}
+			con.close();
+
+		} catch (Exception e) {
+
+			output = "Error while reading feedback";
+			System.out.println(e.getMessage());
+
+		}
+		return output;
+	}// end of read one particular feedback method
+
+	// delete feedback method
+
+	public String deleteFeedback(int feedbackid) {
+
+		String output = "";
+
+		// connect to the database
+
+		try {
+
+			Connection con = connect();
+
+			if (con == null) {
+
+				return "Error while connecting to the database for deleting";
+
+			}
+
+			// delete query
+
+			String query = "delete from feedback where feedbackID = " + feedbackid;
+
+			// create a prepared statement
+
+			PreparedStatement stmt = con.prepareStatement(query);
+
+			// execute the statement
+
+			stmt.executeUpdate();
+			output = " Feedback deleted  successfully";
+			con.close();
+
+		} catch (Exception e) {
+
+			output = "Error while deleting feedback";
+			System.out.println(e.getMessage());
+		}
+		return output;
+	}// end of remove method
+
+	// update feedback method
+
+	public String updateFeedback(int feedbackid, int iProjectID, String FpostedBy, String Fdescription) {
+
+		String output = "";
+
+		try {
+
+			Connection con = connect();
+			if (con == null) {
+
+				output = "Error while connecting to the database for updating feedback";
+
+			}
+
+			// update query
+
+			String query = "update feedback set iProjectID = ?, postedBy = ?, description = ?, date = ?,time= ? where feedbackID = ?";
+
+			// create a prepare statement
+
+			PreparedStatement stmt = con.prepareStatement(query);
+
+			// binding values
+
+			stmt.setInt(1, iProjectID);
+			stmt.setString(2, FpostedBy);
+			stmt.setString(3, Fdescription);
+
+			// create a java calendar instance
+
+			Calendar calendar = Calendar.getInstance();
+			java.util.Date currentDate = calendar.getTime();
+
+			// now, create a java.sql.Date from the java.util.Date
+
+			java.sql.Date date = new java.sql.Date(currentDate.getTime());
+
+			stmt.setDate(4, date);
+
+			// time
+			Calendar cal = Calendar.getInstance();
+
+			SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+
+			String ctime = sdf.format(cal.getTime()).toString();
+
+			System.out.println(ctime);
+
+			Time currentTime = Time.valueOf(ctime);
+
+			stmt.setTime(5, currentTime);
+
+			stmt.setInt(6, feedbackid);
+
+			stmt.execute();
+
+			output = "feedback updated  successfully";
+
+			// close the connection
+
+			con.close();
+
+		} catch (Exception e) {
+
+			output = "Error while updating feedback";
+			System.out.println(e.getMessage());
+			e.printStackTrace();
+
+		}
+
+		return output;
+
+	}// end of update method
 }

@@ -5,6 +5,9 @@ import javax.ws.rs.core.MediaType;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.ClientResponse;
+import com.sun.jersey.api.client.WebResource;
 
 import model.InnovativeProject;
 
@@ -37,6 +40,27 @@ public class InnovativeProjectAPI {
 
 		int innovativeProjectID = innovativeProjectObject.get("innovativeProjectID").getAsInt();
 		return ipObj.readOneInnovativeProject(innovativeProjectID);
+	}
+
+	@GET
+	@Path("/feedbacks")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.TEXT_HTML)
+	public String readFeedBacksForProject(String iprojectIDJSON) {
+
+		JsonObject innovativeProjectObject = new JsonParser().parse(iprojectIDJSON).getAsJsonObject();
+		String innovativeProjectID = innovativeProjectObject.get("innovativeProjectID").getAsString();
+
+		// communicate with FeedBack Service
+		Client client = Client.create();
+		String url = "http://localhost:8083/FeedBackService/FeedBack_Service/Feedbacks/feeds";
+		WebResource resource = client.resource(url);
+		String input = "{\"iProjectID\":\"" + innovativeProjectID + "\"}";
+		ClientResponse response = resource.type("application/json").post(ClientResponse.class, input);
+		String output = response.getEntity(String.class);
+
+		return output;
+
 	}
 
 	// implement the innovative project upload method

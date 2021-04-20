@@ -201,7 +201,7 @@ public class Feedback {
 
 			// read feedbacks from DB and assign values for result set variable
 
-			String query = "select* from feedback";
+			String query = "select* from feedback" ;
 			Statement stmt = con.createStatement();
 
 			ResultSet rs = stmt.executeQuery(query);
@@ -242,9 +242,9 @@ public class Feedback {
 		return output;
 	}// end of read method
 
-	// read one particular feedback method
+	// read feedbacks for project method
 
-	public String readOneFeedback(int feedbackid) {
+	public String readFeedBackForProject(int i_projID) {
 
 		String output = "";
 
@@ -262,7 +262,7 @@ public class Feedback {
 
 			// read particular feedback from DB and assign values for result set variable
 
-			String query = "select* from feedback where feedbackID  = " + feedbackid;
+			String query = "select * from feedback where iProjectID =" + i_projID;
 			Statement stmt = con.createStatement();
 
 			ResultSet rs = stmt.executeQuery(query);

@@ -2,7 +2,6 @@ package model;
 
 import java.sql.Connection;
 
-
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -10,6 +9,11 @@ import java.sql.Time;
 import java.text.SimpleDateFormat;
 
 import java.util.Calendar;
+
+
+import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.ClientResponse;
+import com.sun.jersey.api.client.WebResource;
 
 import util.DBconnection;
 import util.Support;
@@ -127,6 +131,7 @@ public class Payment {
 	public String insertPaymentDetails(String cardNo) {
 		String output = "";
 		Support support = new Support(); //to get a random unique number 
+		int referencNumber ;
 
 		try {
 			Connection conn = dbConnection.connect();
@@ -139,10 +144,11 @@ public class Payment {
 			
 			PreparedStatement preparedstatement = conn.prepareStatement(query);
 			
-			preparedstatement.setInt(1, 0);			
-			preparedstatement.setInt(2, support.getRandomNumber());
+			preparedstatement.setInt(1, 0);		
+			referencNumber = support.getRandomNumber();
+			preparedstatement.setInt(2, referencNumber);
 			//these fields need to obtain via Inter service communication
-			preparedstatement.setString(3,"00000");
+			preparedstatement.setString(3,cardNo);
 			preparedstatement.setString(4,"Saman");
 			preparedstatement.setInt(5,1);
 			preparedstatement.setString(6,"innovativeProject");
@@ -171,6 +177,16 @@ public class Payment {
 			conn.close();
 
 			output = "Payment details Inserted SuccessFully";
+			
+			//communicate with Mail Service
+			Client client = Client.create();
+			String url ="http://localhost:8080/MailService/Mail_Service/email";
+			WebResource resource = client.resource(url);
+			String input = "{\"recepient\":\"samarageln@gmail.com\",\"refNumber\":\""+referencNumber+"\"}";
+			ClientResponse response = resource.type("application/json")
+			           .post(ClientResponse.class, input);
+			
+			
 
 		} catch (Exception e) {
 
@@ -180,8 +196,8 @@ public class Payment {
 
 		return output;	
 	}
-	
-	//method to read all the payment details 
+
+	// method to read all the payment details
 	public String readAllPaymentDetails() {
 		String output = "";
 
@@ -192,8 +208,6 @@ public class Payment {
 				output = " Error while Connecting to the database";
 			}
 
-			
-
 			String query = " select * from payments";
 			Statement stmt = conn.createStatement();
 
@@ -201,7 +215,7 @@ public class Payment {
 			ResultSet resultSet = stmt.executeQuery(query);
 
 			while (resultSet.next()) {
-				
+
 				// read a row and storing them on our variables
 				String paymentId = Integer.toString(resultSet.getInt("paymentId"));
 				String refnumber = resultSet.getString("referenceNumber");
@@ -224,21 +238,20 @@ public class Payment {
 				output += "amount : \" " + amount + "\", ";
 				output += "date : \" " + date + "\", ";
 				output += "time : \" " + time + "\"} \n ";
-				
-			
+
 			} // end of while
 
 			// closing the connection
 			conn.close();
 
 		} catch (Exception e) {
-			output = " Error while reading the payment details";
+			output = "Error while reading the payment details";
 			e.printStackTrace();
 		}
 		return output;
 	}
-	
-	//method to read all the payment details  of a specific user 
+
+	// method to read all the payment details of a specific user
 	public String readPaymentDetails(int userId) {
 		String output = "";
 
@@ -249,16 +262,14 @@ public class Payment {
 				output = " Error while Connecting to the database";
 			}
 
-			
-
-			String query = " select * from payments where paidUserId = "+userId;
+			String query = " select * from payments where paidUserId = " + userId;
 			Statement stmt = conn.createStatement();
 
 			// getting the result to the result set
 			ResultSet resultSet = stmt.executeQuery(query);
 
 			while (resultSet.next()) {
-				
+
 				// read a row and storing them on our variables
 				String paymentId = Integer.toString(resultSet.getInt("paymentId"));
 				String refnumber = resultSet.getString("referenceNumber");
@@ -281,8 +292,7 @@ public class Payment {
 				output += "amount : \" " + amount + "\", ";
 				output += "date : \" " + date + "\", ";
 				output += "time : \" " + time + "\"} \n ";
-				
-			
+
 			} // end of while
 
 			// closing the connection
@@ -294,8 +304,8 @@ public class Payment {
 		}
 		return output;
 	}
-	
-	//delete payment details -- allow only for admin
+
+	// delete payment details -- allow only for admin
 	public String removePayment(int paymentId) {
 		String output = "";
 		try {
@@ -320,9 +330,5 @@ public class Payment {
 
 		return output;
 	}
-	
-	
-	
-	
-	
+
 }

@@ -118,11 +118,18 @@ public class Mail {
 		return con;
 	}
 	
+	public String sendCustomMail(String recepient,String subject,String messageBody) throws Exception {
+		return sendMail(recepient,subject,messageBody);
+	}
 	
+	public String sendDefaultMail(String recepient, int refNumber) throws Exception {
+		String subject ="Payment Success!";
+		String messagee = "Congratulations !!!! Your Payment was successed. \n  here is your Reference Number "+refNumber;
+		return sendMail(recepient,subject,messagee);
+	}
 	
-	
-	
-	public  String  sendMail(String recepient) throws Exception {
+
+	public  String  sendMail(String recepient,String subject,String messageBody) throws Exception {
 		
 		System.out.println("Preparing email...");
 		
@@ -133,29 +140,27 @@ public class Mail {
 		properties.put("mail.smtp.host","smtp.gmail.com");
 		properties.put("mail.smtp.port","587");
 		
-		String myAccount = "samarageln@gmail.com";
-		String password = "business8778v";
+		String myAccount = "lahirueduc@gmail.com";
+		String password = "@password123";
 		
-		String subject ="Payment Success!";
-		String messagee = "Congratulations !!!! Your Payment was successed. \n  here is your Reference Number : 11111";
+		
 		
 		//login using the email address
 		Session session = Session.getInstance(properties, new Authenticator() {
 			@Override
 			protected PasswordAuthentication getPasswordAuthentication() {
-			
 				
 				return new PasswordAuthentication(myAccount, password);
 			}
 		});
 		
-		Message message = prepareMessage(session,myAccount,recepient,subject,messagee);
+		Message message = prepareMessage(session,myAccount,recepient,subject,messageBody);
 		
 		Transport.send(message);
 		
 		System.out.println("E Mail sent SuccessFully");
 		
-		return insertPaymentDetails(myAccount,recepient,subject,messagee);
+		return insertEmailDetails(myAccount,recepient,subject,messageBody);
 		
 	}
 
@@ -184,8 +189,10 @@ public class Mail {
 		return null;
 	}
 	
+	
+	
 	//save mail to db
-	public  String insertPaymentDetails(String from, String to, String subject, String message) {
+	public  String insertEmailDetails(String from, String to, String subject, String message) {
 		String output = "";
 
 		try {
@@ -291,7 +298,7 @@ public class Mail {
 		return output;
 	}
 	
-	//method to remove emails
+	//method to remove email
 	public String removeEmail(int mailId) {
 		String output = "";
 		try {

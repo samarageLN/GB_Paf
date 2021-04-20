@@ -46,7 +46,7 @@ public class PaymentsAPI {
 	@Path("/")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.TEXT_PLAIN)
-	public String insertCardDetails(String paymentData) {
+	public String insertPaymentDetails(String paymentData) {
 		// Convert the input string to a JSON object
 		JsonObject paymentObject = new JsonParser().parse(paymentData).getAsJsonObject();	
 		String cardnumber = paymentObject.get("cardNumber").getAsString();

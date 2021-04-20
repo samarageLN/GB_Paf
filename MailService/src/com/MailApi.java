@@ -35,9 +35,31 @@ public class MailApi {
 		
 		JsonObject jsonObject = new JsonParser().parse(maildata).getAsJsonObject();	
 		String recepient = jsonObject.get("recepient").getAsString();
+		int refNumber  = jsonObject.get("refNumber").getAsInt();
 		String output = null;
 		try {
-			output = mail.sendMail(recepient);
+			output = mail.sendDefaultMail(recepient,refNumber);
+		} catch (Exception e) {
+			
+			e.printStackTrace();
+		}
+		return output;
+	}
+	
+	
+	@POST
+	@Path("/custom")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.TEXT_PLAIN)
+	public String insertCustomMailDetails(String maildata) {
+		
+		JsonObject jsonObject = new JsonParser().parse(maildata).getAsJsonObject();	
+		String recepient = jsonObject.get("recepient").getAsString();
+		String subject = jsonObject.get("subject").getAsString();
+		String messageBody = jsonObject.get("messageBody").getAsString();
+		String output = null;
+		try {
+			output = mail.sendCustomMail(recepient, subject, messageBody);
 		} catch (Exception e) {
 			
 			e.printStackTrace();

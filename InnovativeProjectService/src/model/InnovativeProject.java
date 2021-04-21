@@ -19,13 +19,14 @@ public class InnovativeProject {
 	private String projectType;
 	private String projectDescription;
 	private int researcherID;
+	private int quantity;
 
 	public InnovativeProject() {
 
 	}
 
 	public InnovativeProject(int innovativeProjectID, String projectName, double projectPrice, String imageURL,
-			String projectType, String projectDescription, int researcherID) {
+			String projectType, String projectDescription, int researcherID, int quantity) {
 		super();
 		this.innovativeProjectID = innovativeProjectID;
 		this.projectName = projectName;
@@ -34,6 +35,7 @@ public class InnovativeProject {
 		this.projectType = projectType;
 		this.projectDescription = projectDescription;
 		this.researcherID = researcherID;
+		this.quantity = quantity;
 	}
 
 	public int getInnovativeProjectID() {
@@ -64,14 +66,25 @@ public class InnovativeProject {
 		return researcherID;
 	}
 
+	
+	public int getQuantity() {
+		return quantity;
+	}
+
+	public void setQuantity(int quantity) {
+		this.quantity = quantity;
+	}
+
+
+	// DB Connection method
+
 	@Override
 	public String toString() {
 		return "InnovativeProject [innovativeProjectID=" + innovativeProjectID + ", projectName=" + projectName
 				+ ", projectPrice=" + projectPrice + ", imageURL=" + imageURL + ", projectType=" + projectType
-				+ ", projectDescription=" + projectDescription + ", researcherID=" + researcherID + "]";
+				+ ", projectDescription=" + projectDescription + ", researcherID=" + researcherID + ", quantity="
+				+ quantity + "]";
 	}
-
-	// DB Connection method
 
 	public Connection connect() {
 		Connection con = null;
@@ -91,7 +104,7 @@ public class InnovativeProject {
 	// insert method
 
 	public String uploadProject(String pname, String pPrice, String pUrl, String pType, String pDescription,
-			int pResearcherID) {
+			int pResearcherID, int pQuantity) {
 
 		String output = "";
 
@@ -109,8 +122,8 @@ public class InnovativeProject {
 
 			// insert query
 
-			String query = "insert into innovativeprojects (`innovativeProjectID`,`projectName`,`projectPrice`,`imageURL`,`projectType`,`projectDescription`,`researcherID`)"
-					+ " values(?, ?, ?, ?, ?, ?, ?)";
+			String query = "insert into innovativeprojects (`innovativeProjectID`,`projectName`,`projectPrice`,`imageURL`,`projectType`,`projectDescription`,`researcherID`,quantity)"
+					+ " values(?, ?, ?, ?, ?, ?, ?, ?)";
 
 			// create a prepared statement
 
@@ -125,6 +138,7 @@ public class InnovativeProject {
 			preparedStmt.setString(5, pType);
 			preparedStmt.setString(6, pDescription);
 			preparedStmt.setInt(7, pResearcherID);
+			preparedStmt.setInt(8, pQuantity);
 
 			// execute the statement
 
@@ -182,6 +196,7 @@ public class InnovativeProject {
 				String itprojectType = rs.getString("projectType");
 				String iprojectdescription = rs.getString("projectDescription");
 				String iresaecrhid = Integer.toString(rs.getInt("researcherID"));
+				String iquantity = Integer.toString(rs.getInt("quantity"));
 
 				// create a JSON String 
 				
@@ -193,7 +208,8 @@ public class InnovativeProject {
 				output += "imageURL : \" " + iprojectimageurl + "\", ";
 				output += "projectType : \" " + itprojectType + "\", ";
 				output += "projectDescription : \" " + iprojectdescription + "\", ";
-				output += "researcherID : \" " + iresaecrhid + "\" }";
+				output += "researcherID : \" " + iresaecrhid + "\", ";
+				output += "quantity : \" " + iquantity + "\" }";
 
 				output += "\n";
 
@@ -246,6 +262,7 @@ public class InnovativeProject {
 				String itprojectType = rs.getString("projectType");
 				String iprojectdescription = rs.getString("projectDescription");
 				String iresaecrhid = Integer.toString(rs.getInt("researcherID"));
+				String iquantity = Integer.toString(rs.getInt("quantity"));
 
 				// create a JSON String
 				
@@ -257,7 +274,8 @@ public class InnovativeProject {
 				output += "imageURL : \" " + iprojectimageurl + "\", ";
 				output += "projectType : \" " + itprojectType + "\", ";
 				output += "projectDescription : \" " + iprojectdescription + "\", ";
-				output += "researcherID : \" " + iresaecrhid + "\" }";
+				output += "researcherID : \" " + iresaecrhid + "\", ";
+				output += "quantity : \" " + iquantity + "\" }";
 
 				output += "\n";
 
@@ -316,7 +334,7 @@ public class InnovativeProject {
 	// update innovativeProject method
 
 	public String updateInnovativeProject(String IProjectID, String pname, double pPrice, String pUrl, String pType,
-			String pDescription, int pResearcherID) {
+			String pDescription, int pResearcherID, int pQuantity) {
 
 		String output = "";
 
@@ -332,7 +350,7 @@ public class InnovativeProject {
 			// update query
 
 			String query = "update innovativeprojects set projectName = ?,	projectPrice = ?,imageURL = ?,	"
-					+ "projectType= ?, projectDescription= ?, researcherID= ? where innovativeProjectID = ?";
+					+ "projectType= ?, projectDescription= ?, researcherID= ?, 	quantity = ? where innovativeProjectID = ?";
 
 			// create a prepare statement
 
@@ -348,8 +366,9 @@ public class InnovativeProject {
 			stmt.setString(4, pType);
 			stmt.setString(5, pDescription);
 			stmt.setInt(6, pResearcherID);
+			stmt.setInt(7, pQuantity);
 
-			stmt.setInt(7, iProjID);
+			stmt.setInt(8, iProjID);
 
 			stmt.execute();
 

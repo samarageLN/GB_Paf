@@ -32,10 +32,10 @@ public class UserAccountService {
 	@Path("/")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.TEXT_PLAIN)
-	public String insertUserDetails(@FormParam("uname") String uname,@FormParam("password") String password,@FormParam("email") String email,@FormParam("age") String age,@FormParam("address") String address)
+	public String insertUserDetails(@FormParam("uname") String uname,@FormParam("password") String password,@FormParam("email") String email,@FormParam("age") String age,@FormParam("address") String address,@FormParam("type") String type)
 	{
 		System.out.println("insert service method");
-		String output = uaobj.insertUserDetails(uname, password, email, age, address);
+		String output = uaobj.insertUserDetails(uname, password, email, age, address,type);
 		return output;
 	}
 	
@@ -56,9 +56,10 @@ public class UserAccountService {
 		String email = jsonobj.get("email").getAsString();
 		String age = jsonobj.get("age").getAsString();
 		String address = jsonobj.get("address").getAsString();
+		String type = jsonobj.get("type").getAsString();
 	
-		System.out.println(password);
-		String output = uaobj.updateUserDetails(uid, uname, password, email, age, address);
+		
+		String output = uaobj.updateUserDetails(uid, uname, password, email, age, address,type);
 		return output;
 	}
 	

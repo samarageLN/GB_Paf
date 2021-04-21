@@ -28,4 +28,29 @@ public class LoginService {
 		}
 		
 	}
+	
+	
+	@POST
+	@Path("/logout")
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Produces(MediaType.TEXT_PLAIN)
+	public String logout(@FormParam("uname") String uname)
+	{
+		
+		String output = lobj.logoutTheuser(uname);
+		return output;
+		
+	}
+	
+	
+	
+	@GET
+	@Path("/")
+	@Produces(MediaType.TEXT_HTML)
+	public String readUserDetails()
+	{
+			return lobj.getLoggedUserInfo();
+	}
+	
+	
 }

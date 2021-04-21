@@ -43,16 +43,34 @@ public class PaymentsAPI {
 	
 	
 	@POST
-	@Path("/")
+	@Path("/purchase")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.TEXT_PLAIN)
-	public String insertPaymentDetails(String paymentData) {
+	public String retrieveFromIProjects(String purchaseData) {
 		// Convert the input string to a JSON object
-		JsonObject paymentObject = new JsonParser().parse(paymentData).getAsJsonObject();	
-		String cardnumber = paymentObject.get("cardNumber").getAsString();
-		String output = payment.insertPaymentDetails(cardnumber);
+		JsonObject purchasejson = new JsonParser().parse(purchaseData).getAsJsonObject();
+			
+		int cusId = purchasejson.get("customerId").getAsInt();
+		String cusName = purchasejson.get("customerName").getAsString();
+		int projId = purchasejson.get("InnovativeprojectID").getAsInt();
+		String projName = purchasejson.get("iprojectName").getAsString();
+		double amount = purchasejson.get("amount").getAsDouble();
+		String output = payment.insertPaymentDetails(cusName,cusId,projId,projName,"purchase",amount);
 		return output;
 	}
+	
+	//get details about donations -- for david
+//	@POST
+//	@Path("/donate")
+//	@Consumes(MediaType.APPLICATION_JSON)
+//	@Produces(MediaType.TEXT_PLAIN)
+//	public String retrieveFromDonates(String paymentData) {
+//		// Convert the input string to a JSON object
+//		JsonObject paymentObject = new JsonParser().parse(paymentData).getAsJsonObject();	
+//		String cardnumber = paymentObject.get("cardNumber").getAsString();
+//		String output = payment.insertPaymentDetails(cardnumber);
+//		return output;
+//	}
 	
 	@DELETE
 	@Path("/")

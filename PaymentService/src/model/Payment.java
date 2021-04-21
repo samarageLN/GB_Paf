@@ -128,7 +128,7 @@ public class Payment {
 	DBconnection dbConnection = new DBconnection();
 
 	// method for insert payment/transaction details
-	public String insertPaymentDetails(String cardNo) {
+	public String insertPaymentDetails(String paidBy,int paidUserid,int projid, String projectName,String type,double amount) {
 		String output = "";
 		Support support = new Support(); //to get a random unique number 
 		int referencNumber ;
@@ -147,13 +147,13 @@ public class Payment {
 			preparedstatement.setInt(1, 0);		
 			referencNumber = support.getRandomNumber();
 			preparedstatement.setInt(2, referencNumber);
-			//these fields need to obtain via Inter service communication
-			preparedstatement.setString(3,cardNo);
-			preparedstatement.setString(4,"Saman");
-			preparedstatement.setInt(5,1);
-			preparedstatement.setString(6,"innovativeProject");
-			preparedstatement.setString(7,"purchase");
-			preparedstatement.setDouble(8,0.00);
+			//these fields need to obtain via Inter service communication with --account service remaining
+			preparedstatement.setString(3,"card--number");
+			preparedstatement.setString(4,paidBy);
+			preparedstatement.setInt(5,paidUserid);
+			preparedstatement.setString(6,projectName);
+			preparedstatement.setString(7,type);
+			preparedstatement.setDouble(8,amount);
 			
 			
 			// create a java calendar instance
@@ -186,8 +186,9 @@ public class Payment {
 			ClientResponse response = resource.type("application/json")
 			           .post(ClientResponse.class, input);
 			
+			//call a method to communicate with inno.Project service 
+			informProjectService(projid,paidUserid,date.toString(),ctime);
 			
-
 		} catch (Exception e) {
 
 			output = "Error while Inserting Payment details";
@@ -195,6 +196,17 @@ public class Payment {
 		}
 
 		return output;	
+	}
+
+	public void informProjectService(int projId, int customerid, String date, String time) {
+		
+		Client client = Client.create();
+		String url ="http://localhost:8083/InnovativeProjectService/InnovativeProject_Service/InnovativeProjects/confirm"; 
+		WebResource resource = client.resource(url);
+		String input = "{\"innovativeProjectID \":\""+projId+"\",\"customerID\":\""+customerid+"\",\"date\":\""+date+"\",\"time\":\""+time+"\"}";
+		ClientResponse response = resource.type("application/json")
+		           .post(ClientResponse.class, input);
+		
 	}
 
 	// method to read all the payment details

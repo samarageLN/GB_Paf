@@ -51,7 +51,8 @@ public class InnovativeProjectAPI {
 		JsonObject innovativeProjectObject = new JsonParser().parse(iprojectIDJSON).getAsJsonObject();
 		String innovativeProjectID = innovativeProjectObject.get("innovativeProjectID").getAsString();
 
-		// communicate with FeedBack Service
+		// communicate with FeedBack Service. get feedbacks for a particular project
+		
 		Client client = Client.create();
 		String url = "http://localhost:8083/FeedBackService/FeedBack_Service/Feedbacks/feeds";
 		WebResource resource = client.resource(url);

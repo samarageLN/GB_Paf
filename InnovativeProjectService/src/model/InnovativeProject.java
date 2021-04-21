@@ -178,7 +178,7 @@ public class InnovativeProject {
 
 			}
 
-			// read innovativeProjects from DB and assign values for resultset variable
+			// read innovativeProjects from DB and assign values for result set variable
 
 			String query = "select* from innovativeprojects";
 			Statement stmt = con.createStatement();

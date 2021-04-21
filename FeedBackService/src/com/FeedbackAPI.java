@@ -30,7 +30,7 @@ public class FeedbackAPI {
 		return fObj.viewFeedbacks();
 	}
 
-	// implement the read one particular feedback method
+	// implement the read feedbacks method for given project id
 	//this will call by the innovationprojectService
 	
 	@POST

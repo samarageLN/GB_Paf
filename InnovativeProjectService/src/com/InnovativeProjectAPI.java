@@ -42,6 +42,7 @@ public class InnovativeProjectAPI {
 		return ipObj.readOneInnovativeProject(innovativeProjectID);
 	}
 
+	// communicate with feedback service
 	@GET
 	@Path("/feedbacks")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -63,6 +64,8 @@ public class InnovativeProjectAPI {
 		return output;
 
 	}
+	
+	
 
 	// implement the innovative project upload method
 
@@ -130,5 +133,7 @@ public class InnovativeProjectAPI {
 		return output;
 
 	}
+	
+	
 
 }

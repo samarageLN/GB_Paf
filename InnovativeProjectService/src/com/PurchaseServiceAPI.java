@@ -22,25 +22,43 @@ public class PurchaseServiceAPI {
 	@Produces(MediaType.TEXT_PLAIN)
 	public String proceedToPayment(String ProjectDetails) {
 
-		// create a JSON Object
+		// create iproject JSON Object
 
 		JsonObject innovativeProjectObject = new JsonParser().parse(ProjectDetails).getAsJsonObject();
+
+		// get by postman
 
 		int iProjID = innovativeProjectObject.get("innovativeProjectID").getAsInt();
 		String projectname = innovativeProjectObject.get("projectName").getAsString();
 		double projectprice = innovativeProjectObject.get("projectPrice").getAsDouble();
-		int customerID = innovativeProjectObject.get("customerid").getAsInt();
+
+		return sendDeatailsToPayment(iProjID,projectname,projectprice);
+
+	}
+
+	public String sendDeatailsToPayment(int i_projectid, String pname, double pPrice) {
+
+		// create user JSON Object
+
+		String currentUserDetails = getCurrentLoggedUserinfo();
+		JsonObject userJSONobj = new JsonParser().parse(currentUserDetails).getAsJsonObject();
+		// get by user account communication
+
+		int customerID = userJSONobj.get("UId").getAsInt();
+		String customerName = userJSONobj.get("UserName").getAsString();
+		String cusmail = userJSONobj.get("Email").getAsString();
 
 		// communicate with Payment Service.send order project details to payment.
 
 		Client client = Client.create();
 		String url = "http://localhost:8083/PaymentService/Payment_Service/Payments/purchase";
 		WebResource resource = client.resource(url);
-		String input = "{\"iProjectID\":\"" + iProjID + "\",\"projectName\":\"" + projectname + "\",\"projectPrice\":\""
-				+ projectprice + "\",\"customerid\":\"" + customerID + "\"}";
+		String input = "{\"iProjectID\":\"" + i_projectid + "\",\"projectName\":\"" + pname + "\",\"projectPrice\":\""
+				+ pPrice + "\",\"customerid\":\"" + customerID + "\", \"customerName\":\"" + customerName + "\",\"mail\":\"" + cusmail
+				+ "\"}";
 		ClientResponse response = resource.type("application/json").post(ClientResponse.class, input);
 		String output = response.getEntity(String.class);
-
+		
 		return output;
 
 	}
@@ -65,6 +83,22 @@ public class PurchaseServiceAPI {
 		String pTime = innovativeProjectObject.get("time").getAsString();
 
 		String output = purchaseObj.insertPurchase(iProjID, customerID, pDate, pTime);
+
+		return output;
+
+	}
+
+	public String getCurrentLoggedUserinfo() {
+
+		Client client = Client.create();
+
+		WebResource webResource = client.resource("http://localhost:8083/UserAccounts/UserAccountService/User_logins");
+
+		ClientResponse response = webResource.accept("application/json").get(ClientResponse.class);
+
+		String output = response.getEntity(String.class);
+
+		System.out.println(output);
 
 		return output;
 

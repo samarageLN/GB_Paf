@@ -4,6 +4,13 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
+
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.ClientResponse;
+import com.sun.jersey.api.client.WebResource;
+
 import connection.Conn;
 
 public class Fund {
@@ -130,6 +137,7 @@ public class Fund {
 					+ "<th>Current Total Funds</th><th>Created Date</th><th>Project Name</th>"
 					+ "<th>Document Links</th><th>Description</th><th>Project Type</th><th>Status</th>";
 
+			
 			String query = "select * from funds inner join proposalproject where proposalproject.projectID = funds.proID AND proposalproject.projectID = ?";
 
 			PreparedStatement preparedStmt = conn.prepareStatement(query);
@@ -266,5 +274,20 @@ public class Fund {
 		
 		return output;
 	}
+	/*public String sendProDetais(String projectData) {
+
+		JsonObject proObj = new JsonParser().parse(projectData).getAsJsonObject();
+		String ProID = proObj.get("projectID").getAsString();
+		String Proname = proObj.get("projectname").getAsString();
+		
+		Client client = Client.create();
+		String url = "http://localhost:8083/FeedBackService/FeedBack_Service/Feedbacks/feeds";
+		WebResource resource = client.resource(url);
+		String input = "{\"projectID\":\"" + ProID + "\",\"projectname\":\"" + Proname + " \" }";
+		ClientResponse response = resource.type("application/json").post(ClientResponse.class, input);
+		String output = response.getEntity(String.class);
+
+		return output;*/
+	
 
 }

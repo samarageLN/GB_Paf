@@ -10,7 +10,8 @@ import java.text.SimpleDateFormat;
 
 import java.util.Calendar;
 
-
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
@@ -29,6 +30,9 @@ public class Payment {
 	private double amount;
 	private String date;
 	private String time;
+	
+	UserCard userCard = new UserCard();
+	Support support = new Support(); // to get a random unique number
 
 	// constructors
 	public Payment() {
@@ -128,10 +132,10 @@ public class Payment {
 	DBconnection dbConnection = new DBconnection();
 
 	// method for insert payment/transaction details
-	public String insertPaymentDetails(String paidBy,int paidUserid,int projid, String projectName,String type,double amount) {
-		String output = "";
-		Support support = new Support(); //to get a random unique number 
-		int referencNumber ;
+	public String insertPaymentDetails(String paidBy, int paidUserid, String mailaddress, int projid,
+			String projectName, String type, double amount) {
+		String output = "";		
+		int referencNumber;
 
 		try {
 			Connection conn = dbConnection.connect();
@@ -139,74 +143,89 @@ public class Payment {
 				output = " Error while Connecting to the database";
 			}
 
-			String query = " insert into payments(`paymentId`, `referenceNumber`, `cardNumber`, `paidBy`,`paidUserId`,`paidFor`, `type`, `amount`, `date`, `time`)" +
-			" values(?,?,?,?,?,?,?,?,?,?)";
-			
+			String query = " insert into payments(`paymentId`, `referenceNumber`, `cardNumber`, `paidBy`,`paidUserId`,`paidFor`, `type`, `amount`, `date`, `time`)"
+					+ " values(?,?,?,?,?,?,?,?,?,?)";
+
 			PreparedStatement preparedstatement = conn.prepareStatement(query);
-			
-			preparedstatement.setInt(1, 0);		
+
+			preparedstatement.setInt(1, 0);
 			referencNumber = support.getRandomNumber();
-			preparedstatement.setInt(2, referencNumber);
-			//these fields need to obtain via Inter service communication with --account service remaining
-			preparedstatement.setString(3,"card--number");
-			preparedstatement.setString(4,paidBy);
-			preparedstatement.setInt(5,paidUserid);
-			preparedstatement.setString(6,projectName);
-			preparedstatement.setString(7,type);
-			preparedstatement.setDouble(8,amount);
-			
-			
+			preparedstatement.setInt(2, referencNumber);			
+			preparedstatement.setString(3, userCard.getCardNumber(paidUserid));
+			preparedstatement.setString(4, paidBy);
+			preparedstatement.setInt(5, paidUserid);
+			preparedstatement.setString(6, projectName);
+			preparedstatement.setString(7, type);
+			preparedstatement.setDouble(8, amount);
+
 			// create a java calendar instance
 			Calendar calendar = Calendar.getInstance();
 			java.util.Date currentDate = calendar.getTime();
 
 			// now, create a java.sql.Date from the java.util.Date
-			java.sql.Date date = new java.sql.Date(currentDate.getTime());		
-			preparedstatement.setDate(9,date);
-			
-			//time
+			java.sql.Date date = new java.sql.Date(currentDate.getTime());
+			preparedstatement.setDate(9, date);
+
+			// time
 			Calendar cal = Calendar.getInstance();
-	        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
-	        String ctime =sdf.format(cal.getTime()).toString();
-	        System.out.println(ctime);
-	        Time currentTime = Time.valueOf(ctime);
-			preparedstatement.setTime(10,currentTime);
-		
+			SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+			String ctime = sdf.format(cal.getTime()).toString();
+			System.out.println(ctime);
+			Time currentTime = Time.valueOf(ctime);
+			preparedstatement.setTime(10, currentTime);
 
 			preparedstatement.execute();
 			conn.close();
 
 			output = "Payment details Inserted SuccessFully";
-			
-			//communicate with Mail Service
-			Client client = Client.create();
-			String url ="http://localhost:8080/MailService/Mail_Service/email";
-			WebResource resource = client.resource(url);
-			String input = "{\"recepient\":\"samarageln@gmail.com\",\"refNumber\":\""+referencNumber+"\"}";
-			ClientResponse response = resource.type("application/json")
-			           .post(ClientResponse.class, input);
-			
-			//call a method to communicate with inno.Project service 
-			informProjectService(projid,paidUserid,date.toString(),ctime);
-			
+
+			notifyUserByMail(mailaddress, referencNumber);
+			informProjectService(projid, paidUserid, date.toString(), ctime);
+
 		} catch (Exception e) {
 
 			output = "Error while Inserting Payment details";
 			e.printStackTrace();
 		}
 
-		return output;	
+		return output;
+	}
+
+	
+	public void notifyUserByMail(String recepient, int referencNumber) {
+		// communicate with Mail Service
+		Client client = Client.create();
+		String url = "http://localhost:8080/MailService/Mail_Service/email";
+		WebResource resource = client.resource(url);
+		String input = "{\"recepient\":\""+recepient+"\",\"refNumber\":\"" + referencNumber + "\"}";
+		ClientResponse response = resource.type("application/json").post(ClientResponse.class, input);
+
 	}
 
 	public void informProjectService(int projId, int customerid, String date, String time) {
-		
+
 		Client client = Client.create();
-		String url ="http://localhost:8083/InnovativeProjectService/InnovativeProject_Service/InnovativeProjects/confirm"; 
+		String url = "http://localhost:8080/InnovativeProjectService/InnovativeProject_Service/Purchase/confirm";
 		WebResource resource = client.resource(url);
-		String input = "{\"innovativeProjectID \":\""+projId+"\",\"customerID\":\""+customerid+"\",\"date\":\""+date+"\",\"time\":\""+time+"\"}";
-		ClientResponse response = resource.type("application/json")
-		           .post(ClientResponse.class, input);
-		
+		String input = "{\"innovativeProjectID\":\"" + projId + "\",\"customerID\":\"" + customerid + "\",\"date\":\""
+				+ date + "\",\"time\":\"" + time + "\"}";
+		ClientResponse response = resource.type("application/json").post(ClientResponse.class, input);
+
+	}
+
+	// method to get the current logged user's info from accountService
+	public String getCurrentLoggedUserinfo() {
+
+		Client client = Client.create();
+
+		WebResource webResource = client.resource("http://localhost:8080/UserAccounts/UserAccountService/User_logins");
+
+		ClientResponse response = webResource.accept("application/json").get(ClientResponse.class);
+
+		String output = response.getEntity(String.class);
+
+		return output;
+
 	}
 
 	// method to read all the payment details

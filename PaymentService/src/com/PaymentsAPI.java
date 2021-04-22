@@ -49,13 +49,14 @@ public class PaymentsAPI {
 	public String retrieveFromIProjects(String purchaseData) {
 		// Convert the input string to a JSON object
 		JsonObject purchasejson = new JsonParser().parse(purchaseData).getAsJsonObject();
-			
-		int cusId = purchasejson.get("customerId").getAsInt();
-		String cusName = purchasejson.get("customerName").getAsString();
-		int projId = purchasejson.get("InnovativeprojectID").getAsInt();
-		String projName = purchasejson.get("iprojectName").getAsString();
-		double amount = purchasejson.get("amount").getAsDouble();
-		String output = payment.insertPaymentDetails(cusName,cusId,projId,projName,"purchase",amount);
+				
+		int cusId = purchasejson.get("customerid").getAsInt();
+		//String cusName = purchasejson.get("customerName").getAsString();
+		//String cusomerMail  = purchasejson.get("mail").getAsString();
+		int projId = purchasejson.get("iProjectID").getAsInt();
+		String projName = purchasejson.get("projectName").getAsString();
+		double amount = purchasejson.get("projectPrice").getAsDouble();
+		String output = payment.insertPaymentDetails("sahani",cusId,"samarageln@gmail.com",projId,projName,"purchase",amount);
 		return output;
 	}
 	

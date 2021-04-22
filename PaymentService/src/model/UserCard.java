@@ -3,6 +3,7 @@ package model;
 import java.sql.Connection;
 
 
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -176,7 +177,6 @@ public class UserCard {
 		}
 		return output;
 	}
-
 	// method to remove the card details of a user
 
 	public String removeCard(int userId) {
@@ -241,4 +241,35 @@ public class UserCard {
 		return output;
 	}
 
+	
+	//method to get the card number when userid is given
+	public String getCardNumber(int userId) {
+		String cardnumber = "";
+
+		try {
+
+			Connection conn = dbConnection.connect();
+			if (conn == null) {
+				System.out.println(" Error while Connecting to the database");
+			}
+			String query = " select cardNumber from usercard where userId = " + userId;
+			PreparedStatement stmt = conn.prepareStatement(query);
+
+			// getting the result to the result set
+			ResultSet resultSet = stmt.executeQuery(query);
+
+			while (resultSet.next()) {
+						
+				 cardnumber = resultSet.getString("cardnumber");
+			
+			} // end of while
+
+			// closing the connection
+			conn.close();
+
+		} catch (Exception e) {
+			System.out.println(" Error while reading the Items");
+		}
+		return cardnumber;
+	}
 }

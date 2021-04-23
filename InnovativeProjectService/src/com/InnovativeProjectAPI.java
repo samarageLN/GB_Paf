@@ -84,11 +84,10 @@ public class InnovativeProjectAPI {
 		String imageurl = innovativeProjectObject.get("imageURL").getAsString();
 		String project_type = innovativeProjectObject.get("projectType").getAsString();
 		String projdesc = innovativeProjectObject.get("projectDescription").getAsString();
-		int researchid = innovativeProjectObject.get("researcherID").getAsInt();
 		int pquantity = innovativeProjectObject.get("quantity").getAsInt();
 		
 		String output = ipObj.uploadProject(projectname, Double.toString(projectprice), imageurl, project_type,
-				projdesc, researchid, pquantity);
+				projdesc, pquantity);
 
 		return output;
 

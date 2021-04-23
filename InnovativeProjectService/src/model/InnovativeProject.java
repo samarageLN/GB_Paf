@@ -5,6 +5,9 @@ import java.sql.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 
+import com.CommunicationService;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
@@ -103,8 +106,15 @@ public class InnovativeProject {
 
 	// insert method
 
-	public String uploadProject(String pname, String pPrice, String pUrl, String pType, String pDescription,
-			int pResearcherID, int pQuantity) {
+	public String uploadProject(String pname, String pPrice, String pUrl, String pType, String pDescription,int pQuantity) {
+		
+		CommunicationService comObj = new CommunicationService();
+		
+		String currentUserDetails =comObj.getCurrentLoggedUserinfo();
+		
+		JsonObject userJSONobj = new JsonParser().parse(currentUserDetails).getAsJsonObject();
+		
+		int reseacherID = userJSONobj.get("UId").getAsInt();
 
 		String output = "";
 
@@ -137,7 +147,7 @@ public class InnovativeProject {
 			preparedStmt.setString(4, pUrl);
 			preparedStmt.setString(5, pType);
 			preparedStmt.setString(6, pDescription);
-			preparedStmt.setInt(7, pResearcherID);
+			preparedStmt.setInt(7, reseacherID);
 			preparedStmt.setInt(8, pQuantity);
 
 			// execute the statement

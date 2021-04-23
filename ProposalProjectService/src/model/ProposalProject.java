@@ -95,9 +95,8 @@ public class ProposalProject {
 
 			while (rs.next()) {
 
-				// ************************************************ Reading values from fund and
-				// assign them into variables ************************************
-
+// ************************************************ Reading values from fund and assign them into variables ************************************
+				
 				String projectID = Integer.toString(rs.getInt("projectID"));
 				String projectname = rs.getString("projectname");
 				String doclinks = rs.getString("doclinks");
@@ -105,9 +104,8 @@ public class ProposalProject {
 				String projectType = rs.getString("projectType");
 				String status = rs.getString("status");
 
-				// ************************************************ Presenting the values of the
-				// variables in a table format ************************************
-
+// ************************************************ Presenting the values of the variables in a table format ************************************
+				
 				output += "<tr><td>" + projectID + "</td>";
 				output += "<td>" + projectname + "</td>";
 				output += "<td>" + doclinks + "</td>";
@@ -158,8 +156,8 @@ public class ProposalProject {
 
 			while (rs.next()) {
 
-				// ************************************************ Reading values from Project
-				// and assign them into variables ************************************
+// ************************************************ Reading values from Project and assign them into variables****************************
+				
 
 				String proId = Integer.toString(rs.getInt("projectID"));
 				String proName = rs.getString("projectname");
@@ -168,8 +166,7 @@ public class ProposalProject {
 				String proType = rs.getString("projectType");
 				String status = rs.getString("status");
 
-				// ************************************************ Presenting the values of the
-				// variables in a table format ************************************
+// ************************************************ Presenting the values of the// variables in a table format ****************************
 
 				output += "<tr><td>" + proId + "</td>";
 				output += "<td>" + proName + "</td>";
@@ -201,12 +198,11 @@ public class ProposalProject {
 	 ********************************************************************************************************
 	 */
 
-	public String getApproval(String ID, String msg) {
+	public String getApproval(String proname, String msg) {
 		String output = "";
 
-		// ************************************************ Validating the Message that
-		// was received from Admin ************************************
-
+//************************************************ Validating the Message that was received from Admin*************************************
+		System.out.println(msg + proname);
 		if (msg.equals("Approved") || msg.equals("Closed")) {
 
 			try {
@@ -215,14 +211,13 @@ public class ProposalProject {
 					return "Error while connecting to the database for updating";
 				}
 
-				String query = "UPDATE proposalproject SET status=? WHERE projectID =?";
+				String query = "UPDATE proposalproject SET status=? WHERE projectname=?";
 				PreparedStatement preparedStmt = conn.prepareStatement(query);
 
-				// ************************************************ Updating Status Column as
-				// Approved or Closed ************************************
-
+// ************************************************ Updating Status Column as Approved or Closed *******************************************
+				
 				preparedStmt.setString(1, msg);
-				preparedStmt.setInt(2, Integer.parseInt(ID));
+				preparedStmt.setString(2, proname);
 				preparedStmt.execute();
 				conn.close();
 
@@ -236,9 +231,8 @@ public class ProposalProject {
 			return output;
 		}
 
-		// ************************************************ Validating the Message that
-		// was received from Admin ************************************
-
+//************************************************ Validating the Message that was received from Admin **************************************
+		
 		else if (!msg.equals("Approved") || !msg.equals("Closed")) {
 
 			try {
@@ -247,14 +241,13 @@ public class ProposalProject {
 					return "Error while connecting to the database for deleting.";
 				}
 
-				String query = "delete proposalproject, funds from proposalproject inner join funds where proposalproject.projectID = funds.proID and proposalproject.projectID = ?";
+				String query = "delete proposalproject, funds from proposalproject inner join funds where proposalproject.projectID = funds.proID and proposalproject.projectname = ?";
 
-				// ************************************************ Deleting values from
-				// projects and funds by ID ************************************
-
+// ************************************************ Deleting values from projects and funds by ID ********************************************
+				
 				PreparedStatement preparedStmt = conn.prepareStatement(query);
 
-				preparedStmt.setInt(1, Integer.parseInt(ID));
+				preparedStmt.setString(1, proname);
 				preparedStmt.execute();
 				conn.close();
 
@@ -309,6 +302,8 @@ public class ProposalProject {
 		return output;
 	}
 
+//********************************************************** Updating Projects ********************************************************************
+	
 	public String updateProject(String ID, String projectname, String doclinks, String description,
 			String projectType) {
 		String output = "";
@@ -342,7 +337,7 @@ public class ProposalProject {
 
 		Client client = Client.create();
 
-		WebResource webResource = client.resource("http://localhost:8083/UserAccounts/UserAccountService/User_logins");
+		WebResource webResource = client.resource("http://localhost:8081/UserAccounts/UserAccountService/User_logins");
 
 		ClientResponse response = webResource.accept("application/json").get(ClientResponse.class);
 
@@ -351,12 +346,14 @@ public class ProposalProject {
 		return output;
 
 	}
-
+	
+//************************************************* Sending Project details to Admin Method *****************************************************
+	
 	public String sendProdetails(String proName, String doclinks, String description, String projectType,
 			String status) {
 
 		Client client = Client.create();
-		String url = "http://localhost:8083/AdminService/AdminService/Admin";
+		String url = "http://localhost:8081/AdminService/AdminService/Admin";
 		WebResource resource = client.resource(url);
 		String input = "{\"projectname\":\"" + proName + " \",\"doclinks\":\""
 				+ doclinks + " \",\"description\":\"" + description + "\",\"projectType\":\"" + projectType + "\",\"status\":\"" + status + "\"}";

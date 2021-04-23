@@ -96,7 +96,7 @@ public class Fund {
 				String currentFunds = rs.getString("currentTotalFunds");
 				String createdDate = rs.getString("createdDate");
 				
-    //************************************************ Getting values from DB present it in a table like format ************************************
+//************************************************ Getting values from DB present it in a table like format ************************************
 				
 				output += "<tr><td>" + fundID + "</td>";
 				output += "<td>" + projectID + "</td>";
@@ -146,7 +146,7 @@ public class Fund {
 
 			while (rs.next()) {
 				
-  //************************************************ Reading values from fund and project tables and assign them into variables ************************************
+//************************************************ Reading values from fund and project tables and assign them into variables ************************************
 				
 				String fundID = Integer.toString(rs.getInt("fundID"));
 				String projectID = rs.getString("proID");
@@ -160,7 +160,7 @@ public class Fund {
 				String status = rs.getString("status");
 				setCurrentFunds(currentFunds);
 
-   //************************************************ Getting values from both funds and project tables and present it in a table like format ************************************
+//************************************************ Getting values from both funds and project tables and present it in a table like format ************************************
 				
 				output += "<tr><td>" + fundID + "</td>";
 				output += "<td>" + projectID + "</td>";
@@ -274,20 +274,5 @@ public class Fund {
 		
 		return output;
 	}
-	/*public String sendProDetais(String projectData) {
-
-		JsonObject proObj = new JsonParser().parse(projectData).getAsJsonObject();
-		String ProID = proObj.get("projectID").getAsString();
-		String Proname = proObj.get("projectname").getAsString();
-		
-		Client client = Client.create();
-		String url = "http://localhost:8083/FeedBackService/FeedBack_Service/Feedbacks/feeds";
-		WebResource resource = client.resource(url);
-		String input = "{\"projectID\":\"" + ProID + "\",\"projectname\":\"" + Proname + " \" }";
-		ClientResponse response = resource.type("application/json").post(ClientResponse.class, input);
-		String output = response.getEntity(String.class);
-
-		return output;*/
-	
 
 }

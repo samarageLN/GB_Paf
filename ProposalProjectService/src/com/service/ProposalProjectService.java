@@ -75,11 +75,15 @@ public class ProposalProjectService {
 	// ***************************************Get Approval Message from Admin if rejects deleting the row ******************//
 
 	@PUT
-	@Path("/{proName}/{Msg}")
-	@Produces(MediaType.TEXT_HTML)
-	public String getApproval(@PathParam("ProId") String ProId, @PathParam("Msg") String Msg) {
+	@Path("/proname")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.TEXT_PLAIN)
+	public String getApproval(String admindata) {
 
-		String output = pro.getApproval(ProId, Msg);
+		JsonObject proObj = new JsonParser().parse(admindata).getAsJsonObject();
+		String proname = proObj.get("projectname").getAsString();
+		String status = proObj.get("status").getAsString();
+		String output = pro.getApproval(proname, status);
 		return output;
 	}
 

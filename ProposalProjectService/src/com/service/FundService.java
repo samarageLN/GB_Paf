@@ -21,10 +21,10 @@ import model.Fund;
  * FundService
  * 
  ********************************************************************************************************
- *  ###   Date             Author       Description
- *-------------------------------------------------------------------------------------------------------
- *    1   15-04-2021       David        Created
- *    
+ * ### Date Author Description
+ * -------------------------------------------------------------------------------------------------------
+ * 1 15-04-2021 David Created
+ * 
  ********************************************************************************************************
  */
 
@@ -35,8 +35,8 @@ public class FundService {
 
 	Fund fund = new Fund();
 
-	//*****************************************************Insert Fund Details*******************************************//
-	
+//*****************************************************Insert Fund	Details*******************************************//
+
 	@POST
 	@Path("/")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
@@ -45,10 +45,10 @@ public class FundService {
 		String output = fund.insertFunds(proID, actualAmount);
 		return output;
 	}
-	
-	//**************************************************************END***************************************************//
 
-	//*****************************************************Get All Fund Details*******************************************//
+// **************************************************************END***************************************************//
+
+// *****************************************************Get All Fund Details*******************************************//
 	
 	@GET
 	@Path("/")
@@ -57,10 +57,10 @@ public class FundService {
 		return fund.readFunds();
 	}
 
-	//**************************************************************END***************************************************//
-	
-	//*****************************************Get Fund Details and Projects details By ID********************************//
-	
+// **************************************************************END***************************************************//
+
+// *****************************************Get Fund Details and Projects details By ID********************************//
+
 	@GET
 	@Path("/{ID}")
 	@Produces(MediaType.TEXT_HTML)
@@ -69,10 +69,10 @@ public class FundService {
 		String output = fund.readFundById(id);
 		return output;
 	}
-	
-	//**************************************************************END***************************************************//
 
-	//**********************Update Funds and if the actual payment received updating Project Status***********************//
+// **************************************************************END***************************************************//
+
+// **********************Update Funds and if the actual payment received updating Project Status***********************//
 	
 	@PUT
 	@Path("/{fundID}")
@@ -86,29 +86,65 @@ public class FundService {
 		String output = fund.updatePayment(fundID, amount);
 		return output;
 	}
-	
-	//**************************************************************END***************************************************//	
-		
-	@PUT
-	@Path("/")
-	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+
+// **************************************************************END***************************************************//
+
+	@POST
+	@Path("/donate")
+	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.TEXT_PLAIN)
 	public String sendProDetais(String projectData) {
 
+		System.out.println("safsfsf**************");	
 		JsonObject proObj = new JsonParser().parse(projectData).getAsJsonObject();
 		String ProID = proObj.get("projectID").getAsString();
 		String Proname = proObj.get("projectname").getAsString();
 		String amount = proObj.get("amount").getAsString();
+			
+		return sendDeatailsToPayment(ProID,Proname,amount);
+	}
+
+	// method to get the current logged user's info from accountService
+	
+public String sendDeatailsToPayment(String proID, String pname, String amount) {
 		
+		String currentUserDetails = getCurrentLoggedUserinfo();
+
+		JsonObject userJSONobj = new JsonParser().parse(currentUserDetails).getAsJsonObject();
+		
+		// userJSONobj.get("UId").getAsInt();
+		
+		String cname = userJSONobj.get("UserName").getAsString();
+		String cusmail = userJSONobj.get("Email").getAsString();
+		String cID = userJSONobj.get("UId").getAsString();
 		Client client = Client.create();
-		String url = "http://localhost:8083/FeedBackService/FeedBack_Service/Feedbacks/feeds";
+
+		String url = "http://localhost:8081/PaymentService/Payment_Service/Payments/donate";
 		WebResource resource = client.resource(url);
-		String input = "{\"projectID\":\"" + ProID + "\",\"projectname\":\"" + Proname + " \",\"projectname\":\"" + amount + " \" }";
+		
+		String input = "{\"ProjectID\":\"" + proID + "\",\"projectName\":\"" + pname + "\",\"actualName\":\""
+				+ amount + "\",\"customerid\":\"" + cID + "\", \"customerName\":\"" + cname
+				+ "\",\"mail\":\"" + cusmail + "\"}";
+		
 		ClientResponse response = resource.type("application/json").post(ClientResponse.class, input);
 		String output = response.getEntity(String.class);
 
 		return output;
 	}
-
 	
+	public String getCurrentLoggedUserinfo() {
+
+		Client client = Client.create();
+
+		WebResource webResource = client.resource("http://localhost:8081/UserAccounts/UserAccountService/User_logins");
+
+		ClientResponse response = webResource.accept("application/json").get(ClientResponse.class);
+
+		String output = response.getEntity(String.class);
+
+		return output;
+
+	}
+
+
 }

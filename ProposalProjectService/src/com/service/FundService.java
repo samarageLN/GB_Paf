@@ -75,7 +75,7 @@ public class FundService {
 // **********************Update Funds and if the actual payment received updating Project Status***********************//
 	
 	@PUT
-	@Path("/{fundID}")
+	@Path("/")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.TEXT_PLAIN)
 	public String updatePayment(String fundData) {
@@ -112,8 +112,6 @@ public String sendDeatailsToPayment(String proID, String pname, String amount) {
 
 		JsonObject userJSONobj = new JsonParser().parse(currentUserDetails).getAsJsonObject();
 		
-		// userJSONobj.get("UId").getAsInt();
-		
 		String cname = userJSONobj.get("UserName").getAsString();
 		String cusmail = userJSONobj.get("Email").getAsString();
 		String cID = userJSONobj.get("UId").getAsString();
@@ -145,6 +143,4 @@ public String sendDeatailsToPayment(String proID, String pname, String amount) {
 		return output;
 
 	}
-
-
 }

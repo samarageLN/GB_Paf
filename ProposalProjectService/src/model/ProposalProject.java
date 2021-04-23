@@ -5,8 +5,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
@@ -202,15 +200,17 @@ public class ProposalProject {
 		String output = "";
 
 //************************************************ Validating the Message that was received from Admin*************************************
-		System.out.println(msg + proname);
+		System.out.println(proname + msg);
+		
 		if (msg.equals("Approved") || msg.equals("Closed")) {
-
+			
+			System.out.println("Athule inne...."+proname + msg);
 			try {
 				Connection conn = con.connect();
 				if (con == null) {
 					return "Error while connecting to the database for updating";
 				}
-
+				System.out.println(msg + proname);
 				String query = "UPDATE proposalproject SET status=? WHERE projectname=?";
 				PreparedStatement preparedStmt = conn.prepareStatement(query);
 
@@ -221,27 +221,29 @@ public class ProposalProject {
 				preparedStmt.execute();
 				conn.close();
 
-				output = "Updated successfully";
+				output = "Proposal Projects Status Updated successfully";
 
 			} catch (Exception e) {
 				output = "Error while updating the Project";
 				System.err.println(e.getMessage());
 			}
 
+			System.out.println("END................");
 			return output;
 		}
 
 //************************************************ Validating the Message that was received from Admin **************************************
 		
 		else if (!msg.equals("Approved") || !msg.equals("Closed")) {
-
+			
+			System.out.println("Athule inne...."+proname + msg);
 			try {
 				Connection conn = con.connect();
 				if (con == null) {
 					return "Error while connecting to the database for deleting.";
 				}
 
-				String query = "delete proposalproject, funds from proposalproject inner join funds where proposalproject.projectID = funds.proID and proposalproject.projectname = ?";
+				String query = "delete proposalproject, funds from proposalproject inner join funds WHERE proposalproject.projectID = (select proposalproject.projectID where projectname = ?)";
 
 // ************************************************ Deleting values from projects and funds by ID ********************************************
 				
@@ -305,7 +307,7 @@ public class ProposalProject {
 //********************************************************** Updating Projects ********************************************************************
 	
 	public String updateProject(String ID, String projectname, String doclinks, String description,
-			String projectType) {
+			String projectType, String status) {
 		String output = "";
 
 		try {
@@ -313,14 +315,15 @@ public class ProposalProject {
 			if (con == null) {
 				return "Error while connecting to the database for updating";
 			}
-			String query = "UPDATE proposalproject SET projectname=? doclinks=? description=? projectType=? WHERE projectID =?";
+			String query = "UPDATE proposalproject SET projectname=? doclinks=? description=? projectType=? status = ? WHERE projectID =?";
 			PreparedStatement preparedStmt = conn.prepareStatement(query);
 
 			preparedStmt.setString(1, projectname);
 			preparedStmt.setString(2, doclinks);
 			preparedStmt.setString(3, description);
 			preparedStmt.setString(4, projectType);
-			preparedStmt.setInt(5, Integer.parseInt(ID));
+			preparedStmt.setString(5, status);
+			preparedStmt.setInt(6, Integer.parseInt(ID));
 			preparedStmt.execute();
 			conn.close();
 

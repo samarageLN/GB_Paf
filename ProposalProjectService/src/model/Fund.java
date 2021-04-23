@@ -5,12 +5,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.WebResource;
-
 import connection.Conn;
 
 public class Fund {
@@ -126,6 +120,7 @@ public class Fund {
 	 */
 	public String readFundById(String ID) {
 		String output = "";
+
 
 		try {
 			Connection conn = con.connect();
@@ -252,6 +247,7 @@ public class Fund {
 				actualAmount = rs.getDouble("actualAmount");
 				Double currAmount = rs.getDouble("currentTotalFunds");
 				String projectID = rs.getString("proID");
+				String pronme = rs.getString("projectname");
 				
 				Double total = currAmount + Double.parseDouble(amount);
 				
@@ -261,7 +257,7 @@ public class Fund {
 					}
 				else if(actualAmount<=total){
 					System.out.println("Funds are closed");
-					pro.getApproval(projectID, "Closed");
+					pro.getApproval(pronme, "Closed");
 					return Double.toString(actualAmount);
 				}
 			}

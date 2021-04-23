@@ -8,9 +8,7 @@ import org.jsoup.parser.Parser;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.WebResource;
+
 
 import model.Fund;
 import model.ProposalProject;
@@ -74,13 +72,13 @@ public class ProposalProjectService {
 
 	// ***************************************Get Approval Message from Admin if rejects deleting the row ******************//
 
-	@PUT
+	@POST
 	@Path("/proname")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.TEXT_PLAIN)
-	public String getApproval(String admindata) {
+	public String getApproval(String approvedata) {
 
-		JsonObject proObj = new JsonParser().parse(admindata).getAsJsonObject();
+		JsonObject proObj = new JsonParser().parse(approvedata).getAsJsonObject();
 		String proname = proObj.get("projectname").getAsString();
 		String status = proObj.get("status").getAsString();
 		String output = pro.getApproval(proname, status);
@@ -108,7 +106,7 @@ public class ProposalProjectService {
 	// *****************************************************Update Project**************************************************//
 
 	@PUT
-	@Path("/{ProId}")
+	@Path("/proId")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.TEXT_PLAIN)
 	public String updateProject(String projectData) {
@@ -119,8 +117,9 @@ public class ProposalProjectService {
 		String Doclinks = proObj.get("doclinks").getAsString();
 		String Description = proObj.get("description").getAsString();
 		String ProjectType = proObj.get("projectType").getAsString();
-
-		String output = pro.updateProject(ProID, projectName, Doclinks, Description, ProjectType);
+		String status = proObj.get("status").getAsString();
+		
+		String output = pro.updateProject(ProID, projectName, Doclinks, Description, ProjectType,status);
 		return output;
 	}
 

@@ -1,8 +1,9 @@
 package com;
 
+import java.sql.Date;
+import java.util.Calendar;
+
 import javax.ws.rs.*;
-
-
 
 import javax.ws.rs.core.MediaType;
 
@@ -10,11 +11,13 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import model.UserCard;
+import util.Support;
 
 @Path("/UserCards")
 public class UserCardAPI {
 
 	UserCard userCard = new UserCard();
+	Support support = new Support();
 
 	@GET
 	@Path("/")
@@ -33,10 +36,9 @@ public class UserCardAPI {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.TEXT_PLAIN)
 	public String insertCardDetails(String cardData) {
-		// Convert the input string to a JSON object
-		JsonObject cardObject = new JsonParser().parse(cardData).getAsJsonObject();
-
 		
+		String output="";
+		JsonObject cardObject = new JsonParser().parse(cardData).getAsJsonObject();
 
 		int userId = cardObject.get("userId").getAsInt();
 		String nameOnCard = cardObject.get("nameOnCard").getAsString();
@@ -45,10 +47,14 @@ public class UserCardAPI {
 		int secCode = cardObject.get("securityCode").getAsInt();
 		int postalCode = cardObject.get("postalCode").getAsInt();
 
-		// System.out.println(userId + nameOnCard + cardNumber + expDate + secCode +
-		// postalCode);
-
-		String output = userCard.insertCardDetails(userId, nameOnCard, cardNumber, expDate, secCode, postalCode);
+		 String status=support.validateCardDetails(userId, nameOnCard, cardNumber, expDate, secCode, postalCode);
+		
+		if(status.equals("OK")) {
+			 output = userCard.insertCardDetails(userId, nameOnCard, cardNumber, expDate, secCode, postalCode);
+		}else {
+			output=status;
+		}
+	
 		return output;
 	}
 
@@ -82,4 +88,5 @@ public class UserCardAPI {
 		return output;
 	}
 
+	
 }

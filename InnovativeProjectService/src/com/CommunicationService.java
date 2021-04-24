@@ -6,7 +6,8 @@ import com.sun.jersey.api.client.WebResource;
 
 public class CommunicationService {
 	
-	// 
+	// communicate with user account service
+	
 	public String getCurrentLoggedUserinfo() {
 
 		Client client = Client.create();

@@ -15,6 +15,10 @@ import com.sun.jersey.core.util.MultivaluedMapImpl;
 
 public class InnovativeProject {
 
+	// create object of CommunicationService
+
+	CommunicationService comObj = new CommunicationService();
+
 	private int innovativeProjectID;
 	private String projectName;
 	private double projectPrice;
@@ -69,7 +73,6 @@ public class InnovativeProject {
 		return researcherID;
 	}
 
-	
 	public int getQuantity() {
 		return quantity;
 	}
@@ -77,7 +80,6 @@ public class InnovativeProject {
 	public void setQuantity(int quantity) {
 		this.quantity = quantity;
 	}
-
 
 	// DB Connection method
 
@@ -106,14 +108,13 @@ public class InnovativeProject {
 
 	// insert method
 
-	public String uploadProject(String pname, String pPrice, String pUrl, String pType, String pDescription,int pQuantity) {
-		
-		CommunicationService comObj = new CommunicationService();
-		
-		String currentUserDetails =comObj.getCurrentLoggedUserinfo();
-		
+	public String uploadProject(String pname, String pPrice, String pUrl, String pType, String pDescription,
+			int pQuantity) {
+
+		String currentUserDetails = comObj.getCurrentLoggedUserinfo();
+
 		JsonObject userJSONobj = new JsonParser().parse(currentUserDetails).getAsJsonObject();
-		
+
 		int reseacherID = userJSONobj.get("UId").getAsInt();
 
 		String output = "";
@@ -208,8 +209,8 @@ public class InnovativeProject {
 				String iresaecrhid = Integer.toString(rs.getInt("researcherID"));
 				String iquantity = Integer.toString(rs.getInt("quantity"));
 
-				// create a JSON String 
-				
+				// create a JSON String
+
 				output += "{";
 
 				output += "innovativeProjectID : \" " + iprojectid + "\", ";
@@ -275,7 +276,7 @@ public class InnovativeProject {
 				String iquantity = Integer.toString(rs.getInt("quantity"));
 
 				// create a JSON String
-				
+
 				output += "{";
 
 				output += "innovativeProjectID : \" " + iprojectid + "\", ";
@@ -344,7 +345,13 @@ public class InnovativeProject {
 	// update innovativeProject method
 
 	public String updateInnovativeProject(String IProjectID, String pname, double pPrice, String pUrl, String pType,
-			String pDescription, int pResearcherID, int pQuantity) {
+			String pDescription, int pQuantity) {
+
+		String currentUserDetails = comObj.getCurrentLoggedUserinfo();
+
+		JsonObject userJSONobj = new JsonParser().parse(currentUserDetails).getAsJsonObject();
+
+		int reseacherID = userJSONobj.get("UId").getAsInt();
 
 		String output = "";
 
@@ -375,7 +382,7 @@ public class InnovativeProject {
 			stmt.setString(3, pUrl);
 			stmt.setString(4, pType);
 			stmt.setString(5, pDescription);
-			stmt.setInt(6, pResearcherID);
+			stmt.setInt(6, reseacherID);
 			stmt.setInt(7, pQuantity);
 
 			stmt.setInt(8, iProjID);

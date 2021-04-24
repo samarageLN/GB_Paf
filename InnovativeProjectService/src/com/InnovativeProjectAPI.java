@@ -124,11 +124,10 @@ public class InnovativeProjectAPI {
 		String imageurl = innovativeProjectObject.get("imageURL").getAsString();
 		String project_type = innovativeProjectObject.get("projectType").getAsString();
 		String projdesc = innovativeProjectObject.get("projectDescription").getAsString();
-		String researchid = innovativeProjectObject.get("researcherID").getAsString();
 		String pquantity = innovativeProjectObject.get("quantity").getAsString();
 
 		String output = ipObj.updateInnovativeProject(projectid, projectname, Double.parseDouble(projectprice),
-				imageurl, project_type, projdesc, Integer.parseInt(researchid), Integer.parseInt(pquantity));
+				imageurl, project_type, projdesc, Integer.parseInt(pquantity));
 		return output;
 
 	}

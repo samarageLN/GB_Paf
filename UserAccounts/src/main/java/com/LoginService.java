@@ -46,11 +46,14 @@ public class LoginService {
 	
 	@GET
 	@Path("/")
-	@Produces(MediaType.TEXT_HTML)
+	@Produces(MediaType.APPLICATION_JSON)
 	public String readUserDetails()
 	{
 			return lobj.getLoggedUserInfo();
 	}
+	
+	
+	
 	
 	
 }

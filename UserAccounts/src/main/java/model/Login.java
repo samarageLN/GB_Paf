@@ -119,7 +119,7 @@ public class Login {
 	}
 	
 	//logged in method
-	public String getLoggedUserInfo() {
+	public String getLoggedUserInfo() { 
 
 		String output = "";
 
@@ -131,15 +131,13 @@ public class Login {
 
 		if (con == null) {
 
-			return "Error while connecting to the database for reading";
+		return "Error while connecting to the database for reading";
 
 		}
 
-		
-
 		String query = "select* from user_account where isLoggedIn="+true;
 		Statement stmt = con.createStatement();
-		
+
 		ResultSet rs = stmt.executeQuery(query);
 
 		// iterate through the rows in the result set
@@ -155,32 +153,24 @@ public class Login {
 		String type = rs.getString("type");
 		Boolean isLoggedIn=rs.getBoolean("isLoggedIn");
 
-
 		// create a JSON String
 
-		output += "{";
+		output = "{\"UId\":\"" + uid + "\",\"UserName\":\"" + uname + "\",\"Password\":\""
+		+ password + "\",\"Email\":\""+email+"\",\"Age\":\""+age+"\",\"Address\":\""+address+"\",\"Type\":\""+type+"\",\"LoggedIn\":\""+isLoggedIn+"\"}";
 
-			output += "UId : \" " + uid + "\", ";
-			output += "UserName : \" " + uname + "\", ";
-			output += "Password : \" " + password + "\", ";
-			output += "Email : \" " + email + "\", ";
-			output += "Age : \" " + age + "\", ";
-			output += "Address : \" " + address + "\", ";
-			output += "Type : \" " + type + "\" ";
-			output += "LoggedIn : \" " + isLoggedIn + "\" "+ "}";
-			output += "\n";
-
+		 
 		}
-		con.close();
+		con.close(); 
 
-		} catch (Exception e) {
+		} 
+		catch (Exception e) {
 
 			output = "Error while getting logged user information";
 			System.out.println(e.getMessage());
 		}
+		
 		return output;
-		}
-
+	}
 
 }
 

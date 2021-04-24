@@ -2,6 +2,8 @@ package com;
 
 import javax.ws.rs.*;
 
+
+
 import javax.ws.rs.core.MediaType;
 
 import com.google.gson.JsonObject;
@@ -9,7 +11,7 @@ import com.google.gson.JsonParser;
 
 import model.UserCard;
 
-@Path("UserCards")
+@Path("/UserCards")
 public class UserCardAPI {
 
 	UserCard userCard = new UserCard();
@@ -34,7 +36,7 @@ public class UserCardAPI {
 		// Convert the input string to a JSON object
 		JsonObject cardObject = new JsonParser().parse(cardData).getAsJsonObject();
 
-		// Read the values from the JSON object
+		
 
 		int userId = cardObject.get("userId").getAsInt();
 		String nameOnCard = cardObject.get("nameOnCard").getAsString();

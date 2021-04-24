@@ -13,7 +13,7 @@ import com.google.gson.JsonParser;
 
 import model.Payment;
 
-@Path("Payments")
+@Path("/Payments")
 public class PaymentsAPI {
 
 	Payment payment = new Payment();
@@ -51,12 +51,12 @@ public class PaymentsAPI {
 		JsonObject purchasejson = new JsonParser().parse(purchaseData).getAsJsonObject();
 				
 		int cusId = purchasejson.get("customerid").getAsInt();
-		//String cusName = purchasejson.get("customerName").getAsString();
-		//String cusomerMail  = purchasejson.get("mail").getAsString();
+		String cusName = purchasejson.get("customerName").getAsString();
+		String cusomerMail  = purchasejson.get("mail").getAsString();
 		int projId = purchasejson.get("iProjectID").getAsInt();
 		String projName = purchasejson.get("projectName").getAsString();
 		double amount = purchasejson.get("projectPrice").getAsDouble();
-		String output = payment.insertPaymentDetails("sahani",cusId,"samarageln@gmail.com",projId,projName,"purchase",amount);
+		String output = payment.insertPaymentDetails(cusName,cusId,cusomerMail,projId,projName,"purchase",amount);
 		return output;
 	}
 	

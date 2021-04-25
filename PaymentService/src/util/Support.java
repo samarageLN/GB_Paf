@@ -67,17 +67,22 @@ public class Support {
 		java.sql.Date today = new java.sql.Date(currentDate.getTime());
 		
 		int secCodelength = String.valueOf(secCode).length();
+		int postalCodeLength = String.valueOf(postalCode).length();
 	
 		 if(nameOnCard.matches(".*\\d.*")) {
-			 System.out.println("Card Name cannot contain Numbers ");
+			
 			 status="Card Name cannot contain Numbers!!";
 		 }else if(expDatee.before(today)) {
-			 System.out.println("The date cannot be past date");
+			
 			 status="The date cannot be past date";
 		 }else if(secCodelength>4) {
-			 System.out.println("Security Code is not Valid");
+			 
 			 status="Security Code is not Valid";
-		 }else {
+		 }else if(postalCodeLength!=5) {
+
+			 status="Postal Code is not Valid";
+		 }
+		 else {
 			 status ="OK";
 		 }
 		

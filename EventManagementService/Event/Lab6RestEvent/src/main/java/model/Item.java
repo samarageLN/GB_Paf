@@ -1,0 +1,181 @@
+package model; 
+import java.sql.*; 
+public class Item 
+{ //A common method to connect to the DB
+
+private Connection connect() 
+ { 
+ Connection con = null; 
+ try
+ { 
+ Class.forName("com.mysql.jdbc.Driver"); 
+ 
+ //Provide the correct details: DBServer/DBName, username, password 
+ con = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/event_db", "root", ""); 
+ } 
+ catch (Exception e) 
+ {e.printStackTrace();} 
+ return con; 
+ } 
+
+
+public String insertItem(String Catagory , String Starting_Date, String Closing_Date) 
+ { 
+ String output = ""; 
+ try
+ { 
+ Connection con = connect(); 
+ if (con == null) 
+ {return "Error while connecting to the database for inserting."; } 
+ // create a prepared statement
+ String query = "INSERT INTO event_table"+ " VALUES(NULL,?,?,?);"; 
+ PreparedStatement preparedStmt = con.prepareStatement(query); 
+ // binding values
+ preparedStmt.setString(1, Catagory); 
+ preparedStmt.setString(2, Starting_Date);
+ preparedStmt.setString(3, Closing_Date); 
+// execute the statement3
+ preparedStmt.execute(); 
+ con.close(); 
+ output = "Inserted successfully"; 
+ } 
+ catch (Exception e) 
+ { 
+ output = "Error while inserting the item."; 
+ System.err.println(e.getMessage()); 
+ } 
+ return output; 
+ } 
+
+
+
+
+
+public String readItems() 
+ { 
+ String output = ""; 
+ try
+ { 
+ Connection con = connect(); 
+ if (con == null) 
+ {return "Error while connecting to the database for reading."; } 
+ // Prepare the html table to be displayed
+ output = "<table border='1'><tr><th>Event ID</th><th>Catagory</th>" +
+ "<th>Starting_Date</th>" + "<th>Closing_Date</th>" +
+ "<th>Update</th><th>Remove</th></tr>"; 
+ 
+ String query = "select * from event_table;"; 
+ Statement stmt = con.createStatement(); 
+ ResultSet rs = stmt.executeQuery(query); 
+ // iterate through the rows in the result set
+ while (rs.next()) 
+ { 
+ String eventID = Integer.toString(rs.getInt("eventID")); 
+ String Catagory = rs.getString("Catagory"); 
+ String Starting_Date =  rs.getString("Starting_Date");
+ String Closing_Date =  rs.getString("Closing_Date");
+ 
+
+ // Add into the html table
+ output += "<tr><td>" + eventID + "</td>"; 
+ output += "<td>" + Catagory + "</td>"; 
+ output += "<td>" + Starting_Date + "</td>";
+ output += "<td>" + Closing_Date + "</td>";
+ // buttons
+ output += "<td><input name='btnUpdate' type='button' value='Update' class='btn btn-secondary'></td>"
+ + "<td><form method='post' action='items.jsp'>"
+ + "<input name='btnRemove' type='submit' value='Remove' class='btn btn-danger'>"
+ + "<input name='itemID' type='hidden' value='" + eventID 
+ + "'>" + "</form></td></tr>"; 
+ } 
+ con.close(); 
+ 
+ // Complete the html table
+ output += "</table>"; 
+ 
+ 
+ 
+ 
+ } 
+ catch (Exception e) 
+ { 
+ output = "Error while reading the items."; 
+ System.err.println(e.getMessage()); 
+ } 
+ return output; 
+ } 
+
+
+
+
+
+
+public String updateItem(String EventID, String Catagory, String Starting_Date, String Closing_Date)
+ { 
+ String output = ""; 
+ try
+ { 
+ Connection con = connect(); 
+ if (con == null) 
+ {return "Error while connecting to the database for updating."; } 
+ 
+ // create a prepared statement
+ String query = "UPDATE event_table SET Catagory=?,Starting_Date=?,Closing_Date=? WHERE EventID=?"; 
+ PreparedStatement preparedStmt = con.prepareStatement(query); 
+ // binding values
+ preparedStmt.setString(1, Catagory); 
+ preparedStmt.setString(2, Starting_Date); 
+ preparedStmt.setString(3, Closing_Date); 
+ preparedStmt.setInt(4, Integer.parseInt(EventID)); 
+ // execute the statement
+ preparedStmt.execute(); 
+ con.close(); 
+ output = "Updated successfully"; 
+ } 
+ catch (Exception e) 
+ { 
+ output = "Error while updating the item."; 
+ System.err.println(e.getMessage()); 
+ } 
+ return output; 
+ } 
+
+
+
+
+
+
+
+public String deleteItem(String EventID) 
+ { 
+ String output = ""; 
+ try
+ { 
+ Connection con = connect(); 
+ if (con == null) 
+ {return "Error while connecting to the database for deleting."; } 
+ 
+ // create a prepared statement
+ String query = "delete from event_table where EventID=?"; 
+ PreparedStatement preparedStmt = con.prepareStatement(query); 
+ // binding values
+ preparedStmt.setInt(1, Integer.parseInt(EventID)); 
+ // execute the statement
+ preparedStmt.execute(); 
+ con.close(); 
+ output = "Deleted successfully"; 
+ } 
+ catch (Exception e) 
+ { 
+ output = "Error while deleting the item."; 
+ System.err.println(e.getMessage()); 
+ } 
+ return output; 
+ } 
+
+
+
+
+
+
+}

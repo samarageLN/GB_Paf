@@ -92,12 +92,12 @@ public class ProposalProjectService {
 
 	@DELETE
 	@Path("/")
-	@Consumes(MediaType.APPLICATION_XML)
+	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.TEXT_PLAIN)
 	public String deleteProjects(String proData) {
-		Document doc = Jsoup.parse(proData, "", Parser.xmlParser());
-		String projectID = doc.select("projectID").text();
-		String output = pro.deleteProjects(projectID);
+		JsonObject proObj = new JsonParser().parse(proData).getAsJsonObject();
+		String proname = proObj.get("proname").getAsString();
+		String output = pro.deleteProjects(proname);
 		return output;
 	}
 

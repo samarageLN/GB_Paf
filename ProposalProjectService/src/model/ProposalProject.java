@@ -278,7 +278,7 @@ public class ProposalProject {
 	 ********************************************************************************************************
 	 */
 
-	public String deleteProjects(String Id) {
+	public String deleteProjects(String proname) {
 		String output = "";
 		try {
 			Connection conn = con.connect();
@@ -286,11 +286,11 @@ public class ProposalProject {
 				return "Error while connecting to the database for deleting.";
 			}
 
-			String query = "delete proposalproject, funds from proposalproject inner join funds where proposalproject.projectID = funds.proID and proposalproject.projectID = ?";
+			String query = "delete proposalproject, funds from proposalproject inner join funds where proposalproject.projectID = funds.proID and proposalproject.projectname = ?";
 
 			PreparedStatement preparedStmt = conn.prepareStatement(query);
 
-			preparedStmt.setInt(1, Integer.parseInt(Id));
+			preparedStmt.setString(1, proname);
 			preparedStmt.execute();
 			conn.close();
 

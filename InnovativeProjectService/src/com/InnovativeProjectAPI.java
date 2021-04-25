@@ -10,6 +10,7 @@ import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
 
 import model.InnovativeProject;
+import util.Validation;
 
 @Path("/InnovativeProjects")
 public class InnovativeProjectAPI {
@@ -17,6 +18,10 @@ public class InnovativeProjectAPI {
 	// implement the read all InnovativeProjects method
 
 	InnovativeProject ipObj = new InnovativeProject();
+
+	// create object of validation class
+
+	Validation vObj = new Validation();
 
 	@GET
 	@Path("/")
@@ -53,7 +58,7 @@ public class InnovativeProjectAPI {
 		String innovativeProjectID = innovativeProjectObject.get("innovativeProjectID").getAsString();
 
 		// communicate with FeedBack Service. get feedbacks for a particular project
-		
+
 		Client client = Client.create();
 		String url = "http://localhost:8083/FeedBackService/FeedBack_Service/Feedbacks/feeds";
 		WebResource resource = client.resource(url);
@@ -64,8 +69,6 @@ public class InnovativeProjectAPI {
 		return output;
 
 	}
-	
-	
 
 	// implement the innovative project upload method
 
@@ -85,9 +88,22 @@ public class InnovativeProjectAPI {
 		String project_type = innovativeProjectObject.get("projectType").getAsString();
 		String projdesc = innovativeProjectObject.get("projectDescription").getAsString();
 		int pquantity = innovativeProjectObject.get("quantity").getAsInt();
-		
-		String output = ipObj.uploadProject(projectname, Double.toString(projectprice), imageurl, project_type,
-				projdesc, pquantity);
+
+		// call method of validation class.
+
+		String output = "";
+
+		String result = vObj.validateProjectDetails(imageurl, projectprice, project_type, pquantity);
+
+		if (!result.equals("OK")) {
+
+			output = result;
+
+		} else {  // if there are valid data insert the project
+
+			output = ipObj.uploadProject(projectname, Double.toString(projectprice), imageurl, project_type, projdesc,pquantity);
+
+		}
 
 		return output;
 
@@ -131,7 +147,5 @@ public class InnovativeProjectAPI {
 		return output;
 
 	}
-	
-	
 
 }
